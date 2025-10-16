@@ -31,8 +31,8 @@ import io.swagger.v3.oas.models.OpenAPI;
  * <p>
  * It uses {@link SwaggerConfiguration} and {@link GenericOpenApiContextBuilder} from the <em>swagger-core</em> library
  * to introspect annotated Spring controllers and build a valid {@link OpenAPI} model representation.
- *
- * <h3>Example usage:</h3>
+ * <p>
+ * <b>Example usage:</b>
  *
  * <pre>{@code
  * java -cp target/classes:<dependencies> \
@@ -51,7 +51,17 @@ import io.swagger.v3.oas.models.OpenAPI;
  */
 public class OpenApiSpecGenerator {
 
+	/**
+	 * The logger.
+	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(OpenApiSpecGenerator.class);
+
+	/**
+	 * Hide constructor.
+	 */
+	private OpenApiSpecGenerator() {
+		// empty
+	}
 
 	/**
 	 * Entry point for CLI execution.
