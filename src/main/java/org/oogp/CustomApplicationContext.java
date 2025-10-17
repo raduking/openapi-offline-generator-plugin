@@ -267,13 +267,12 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
-		var e = new UnsupportedOperationException();
-		LOGGER.error("Error", e);
-		throw e;
+		return Classes.unsupportedOperation();
 	}
 
 	@Override
 	public String getMessage(String code, Object[] args, Locale locale) throws NoSuchMessageException {
+		LOGGER.info("code: {}, args: {}, locale: {}", code, args, locale);
 		return Classes.unsupportedOperation();
 	}
 

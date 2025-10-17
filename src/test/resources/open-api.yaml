@@ -88,11 +88,6 @@ components:
       properties:
         headers:
           properties:
-            accessControlAllowHeaders:
-              items: {}
-            accessControlAllowMethods:
-              items:
-                $ref: "#/components/schemas/HttpMethod"
             origin: {}
             accept:
               items:
@@ -100,32 +95,6 @@ components:
             acceptPatch:
               items:
                 $ref: "#/components/schemas/MediaType"
-            contentDisposition:
-              $ref: "#/components/schemas/ContentDisposition"
-            acceptLanguageAsLocales:
-              items:
-                properties:
-                  language: {}
-                  displayName: {}
-                  country: {}
-                  variant: {}
-                  script: {}
-                  unicodeLocaleAttributes:
-                    uniqueItems: true
-                    items: {}
-                  unicodeLocaleKeys:
-                    uniqueItems: true
-                    items: {}
-                  displayLanguage: {}
-                  displayScript: {}
-                  displayCountry: {}
-                  displayVariant: {}
-                  extensionKeys:
-                    uniqueItems: true
-                    items: {}
-                  iso3Language: {}
-                  iso3Country: {}
-            accessControlAllowCredentials: {}
             allow:
               uniqueItems: true
               items:
@@ -209,6 +178,43 @@ components:
             upgrade: {}
             vary:
               items: {}
+            ifModifiedSince:
+              format: int64
+            contentType:
+              $ref: "#/components/schemas/MediaType"
+            contentLength:
+              format: int64
+            contentDisposition:
+              $ref: "#/components/schemas/ContentDisposition"
+            acceptLanguageAsLocales:
+              items:
+                properties:
+                  language: {}
+                  displayName: {}
+                  country: {}
+                  variant: {}
+                  script: {}
+                  unicodeLocaleAttributes:
+                    uniqueItems: true
+                    items: {}
+                  unicodeLocaleKeys:
+                    uniqueItems: true
+                    items: {}
+                  displayLanguage: {}
+                  displayScript: {}
+                  displayCountry: {}
+                  displayVariant: {}
+                  extensionKeys:
+                    uniqueItems: true
+                    items: {}
+                  iso3Language: {}
+                  iso3Country: {}
+            accessControlAllowCredentials: {}
+            accessControlAllowHeaders:
+              items: {}
+            accessControlAllowMethods:
+              items:
+                $ref: "#/components/schemas/HttpMethod"
             accessControlAllowOrigin: {}
             accessControlExposeHeaders:
               items: {}
@@ -219,12 +225,6 @@ components:
             accessControlRequestMethod:
               $ref: "#/components/schemas/HttpMethod"
             ifUnmodifiedSince:
-              format: int64
-            ifModifiedSince:
-              format: int64
-            contentType:
-              $ref: "#/components/schemas/MediaType"
-            contentLength:
               format: int64
             empty: {}
             all:
@@ -246,11 +246,6 @@ components:
       properties:
         headers:
           properties:
-            accessControlAllowHeaders:
-              items: {}
-            accessControlAllowMethods:
-              items:
-                $ref: "#/components/schemas/HttpMethod"
             origin: {}
             accept:
               items:
@@ -258,32 +253,6 @@ components:
             acceptPatch:
               items:
                 $ref: "#/components/schemas/MediaType"
-            contentDisposition:
-              $ref: "#/components/schemas/ContentDisposition"
-            acceptLanguageAsLocales:
-              items:
-                properties:
-                  language: {}
-                  displayName: {}
-                  country: {}
-                  variant: {}
-                  script: {}
-                  unicodeLocaleAttributes:
-                    uniqueItems: true
-                    items: {}
-                  unicodeLocaleKeys:
-                    uniqueItems: true
-                    items: {}
-                  displayLanguage: {}
-                  displayScript: {}
-                  displayCountry: {}
-                  displayVariant: {}
-                  extensionKeys:
-                    uniqueItems: true
-                    items: {}
-                  iso3Language: {}
-                  iso3Country: {}
-            accessControlAllowCredentials: {}
             allow:
               uniqueItems: true
               items:
@@ -367,6 +336,43 @@ components:
             upgrade: {}
             vary:
               items: {}
+            ifModifiedSince:
+              format: int64
+            contentType:
+              $ref: "#/components/schemas/MediaType"
+            contentLength:
+              format: int64
+            contentDisposition:
+              $ref: "#/components/schemas/ContentDisposition"
+            acceptLanguageAsLocales:
+              items:
+                properties:
+                  language: {}
+                  displayName: {}
+                  country: {}
+                  variant: {}
+                  script: {}
+                  unicodeLocaleAttributes:
+                    uniqueItems: true
+                    items: {}
+                  unicodeLocaleKeys:
+                    uniqueItems: true
+                    items: {}
+                  displayLanguage: {}
+                  displayScript: {}
+                  displayCountry: {}
+                  displayVariant: {}
+                  extensionKeys:
+                    uniqueItems: true
+                    items: {}
+                  iso3Language: {}
+                  iso3Country: {}
+            accessControlAllowCredentials: {}
+            accessControlAllowHeaders:
+              items: {}
+            accessControlAllowMethods:
+              items:
+                $ref: "#/components/schemas/HttpMethod"
             accessControlAllowOrigin: {}
             accessControlExposeHeaders:
               items: {}
@@ -377,12 +383,6 @@ components:
             accessControlRequestMethod:
               $ref: "#/components/schemas/HttpMethod"
             ifUnmodifiedSince:
-              format: int64
-            ifModifiedSince:
-              format: int64
-            contentType:
-              $ref: "#/components/schemas/MediaType"
-            contentLength:
               format: int64
             empty: {}
             all:

@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apiphany.json.JsonBuilder;
 import org.morphix.reflection.InstanceCreator;
 import org.morphix.reflection.Methods;
 import org.slf4j.Logger;
@@ -142,6 +143,7 @@ public class OpenApiSpecSpringDocGenerator {
 			for (Class<?> cls : classes) {
 				if (null != cls.getAnnotation(RestController.class) || null != cls.getAnnotation(RequestMapping.class)) {
 					controllers.add(cls);
+					LOGGER.info("Found controller: {}", cls);
 				}
 			}
 		}
@@ -162,11 +164,14 @@ public class OpenApiSpecSpringDocGenerator {
 
 		SpringDocConfigProperties springDocConfigProperties = new SpringDocConfigProperties();
 		springDocConfigProperties.setOverrideWithGenericResponse(false);
-		LOGGER.info("Spring Doc Config properties: {}", springDocConfigProperties);
+
+		System.setProperty(JsonBuilder.Property.INDENT_OUTPUT, "true");
+		String properties = JsonBuilder.toJson(springDocConfigProperties);
+		LOGGER.info("Spring Doc Config properties: {}", properties);
 
 		PropertyResolverUtils propertyResolverUtils = new PropertyResolverUtils(
 				null,
-				null,
+				context,
 				springDocConfigProperties);
 
 		SecurityService securityService = new SecurityService(propertyResolverUtils);
@@ -176,7 +181,7 @@ public class OpenApiSpecSpringDocGenerator {
 				Optional.of(openAPI),
 				securityService,
 				springDocConfigProperties,
-				null,
+				propertyResolverUtils,
 				Optional.empty(),
 				Optional.empty(),
 				Optional.of(springDocJavadocProvider));
@@ -195,7 +200,7 @@ public class OpenApiSpecSpringDocGenerator {
 				propertyResolverUtils,
 				Optional.empty(),
 				objectMapperProvider,
-				Optional.of(new SpringDocJavadocProvider()));
+				Optional.of(springDocJavadocProvider));
 
 		RequestBodyService requestBodyService = new RequestBodyService(
 				genericParameterService,
@@ -211,7 +216,7 @@ public class OpenApiSpecSpringDocGenerator {
 		OperationService operationService = new OperationService(
 				genericParameterService,
 				requestBodyService,
-				null,
+				securityService,
 				propertyResolverUtils);
 
 		GenericResponseService responseService = new GenericResponseService(
@@ -277,10 +282,7 @@ public class OpenApiSpecSpringDocGenerator {
 						.produces(methodMapping.produces())
 						.build();
 
-				handlerMapping.registerMapping(
-						mappingInfo,
-						controller,
-						method);
+				handlerMapping.registerMapping(mappingInfo, controller, method);
 			}
 		}
 	}
