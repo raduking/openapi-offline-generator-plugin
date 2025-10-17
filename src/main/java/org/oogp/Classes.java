@@ -14,7 +14,7 @@ public class Classes {
 	/**
 	 * The logger.
 	 */
-	private static final Logger LOGGER = LoggerFactory.getLogger(OpenApiSpecJakartaGenerator.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Classes.class);
 
 	/**
 	 * Hide constructor.
@@ -54,11 +54,17 @@ public class Classes {
 				try {
 					Class<?> cls = Class.forName(className, false, classLoader);
 					classes.add(cls);
-					LOGGER.info("Found controller: {}", className);
+					LOGGER.debug("Found class: {}", className);
 				} catch (ClassNotFoundException e) {
 					throw new IllegalStateException("Could not load class: " + className, e);
 				}
 			}
 		}
+	}
+
+	public static <T> T unsupportedOperation() {
+		var e = new UnsupportedOperationException();
+		LOGGER.error("Error", e);
+		throw e;
 	}
 }

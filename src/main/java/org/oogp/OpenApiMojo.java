@@ -83,7 +83,7 @@ public class OpenApiMojo extends AbstractMojo {
 			Thread.currentThread().setContextClassLoader(projectClassLoader);
 
 			switch (ProjectType.fromString(projectType)) {
-				case SPRING -> OpenApiSpecSpringGenerator.generate(packagesToScan, outputFile);
+				case SPRING -> OpenApiSpecSpringDocGenerator.generate(packagesToScan, outputFile);
 				case JAKARTA -> OpenApiSpecJakartaGenerator.generate(packagesToScan, outputFile);
 				default -> throw new UnsupportedOperationException("Unknown project type: " + projectType);
 			}

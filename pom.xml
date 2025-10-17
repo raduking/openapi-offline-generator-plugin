@@ -55,6 +55,9 @@
 		<gpg.plugin.version>3.2.8</gpg.plugin.version>
 		<central.publishing.plugin.version>0.9.0</central.publishing.plugin.version>
 
+		<!-- Jacoco arguments empty by default -->
+		<jacocoArgLine></jacocoArgLine>
+
 		<!-- Testing dependencies versions -->
 		<jacoco.plugin.version>0.8.13</jacoco.plugin.version>
 		<project.info.reports.plugin.version>3.9.0</project.info.reports.plugin.version>
@@ -87,13 +90,12 @@
 			<artifactId>swagger-jaxrs2-jakarta</artifactId>
 			<version>2.2.39</version>
 		</dependency>
-<!-- 
+
 		<dependency>
 			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-starter-common</artifactId>
+			<artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
 			<version>2.8.13</version>
-		</dependency>
--->
+   		</dependency>
 
 		<!-- Jakarta -->
 		<dependency>
@@ -101,6 +103,11 @@
 			<artifactId>jakarta.ws.rs-api</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+		</dependency>
+		
 		<!-- Maven plugin development dependencies -->
 		<dependency>
 			<groupId>org.apache.maven.plugin-tools</groupId>
@@ -128,11 +135,61 @@
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 
-		<!-- MorphiX -->
+		<!-- Apiphany -->
 		<dependency>
 			<groupId>io.github.raduking</groupId>
-			<artifactId>morphix-all</artifactId>
-			<version>1.0.9</version>
+			<artifactId>apiphany</artifactId>
+			<version>1.0.13</version>
+		</dependency>
+
+		<!-- Javadoc -->
+		<dependency>
+			<groupId>com.github.therapi</groupId>
+			<artifactId>therapi-runtime-javadoc</artifactId>
+			<version>0.15.0</version>
+		</dependency>
+
+		<!-- Testing -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
@@ -315,7 +372,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<!-- mvn openapi-offline-generator-plugin:generate -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
