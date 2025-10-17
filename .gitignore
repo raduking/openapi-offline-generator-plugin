@@ -3,4 +3,4 @@
 .factorypath
 .settings
 
-target/**
+/target/
