@@ -3,19 +3,24 @@ package org.oogp;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.oas.integration.GenericOpenApiContextBuilder;
-import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 
@@ -49,17 +54,17 @@ import io.swagger.v3.oas.models.OpenAPI;
  *
  * @author Radu Sebastian LAZIN
  */
-public class OpenApiSpecGenerator {
+public class OpenApiSpecJakartaGenerator {
 
 	/**
 	 * The logger.
 	 */
-	private static final Logger LOGGER = LoggerFactory.getLogger(OpenApiSpecGenerator.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(OpenApiSpecJakartaGenerator.class);
 
 	/**
 	 * Hide constructor.
 	 */
-	private OpenApiSpecGenerator() {
+	private OpenApiSpecJakartaGenerator() {
 		// empty
 	}
 
@@ -97,23 +102,31 @@ public class OpenApiSpecGenerator {
 	 *
 	 * @param packagesToScan comma-separated list of base packages
 	 * @param outputFile output YAML or JSON file path
-	 * @throws OpenApiConfigurationException when Open API builder fails
 	 * @throws IOException when an I/O error occurs
 	 */
-	public static void generate(String packagesToScan, String outputFile) throws OpenApiConfigurationException, IOException {
+	public static void generate(String packagesToScan, String outputFile) throws IOException {
 		Set<String> packages = Arrays.stream(packagesToScan.split(","))
 				.map(String::trim)
 				.filter(p -> !p.isEmpty())
 				.collect(Collectors.toSet());
 
-		SwaggerConfiguration config = new SwaggerConfiguration()
-				.resourcePackages(packages)
-				.prettyPrint(true);
+		Path projectClassesDir = Classes.detectDirectory();
+		LOGGER.info("Using classes directory: {}", projectClassesDir.toAbsolutePath());
 
-		OpenAPI openAPI = new GenericOpenApiContextBuilder<>()
-				.openApiConfiguration(config)
-				.buildContext(true)
-				.read();
+		Set<Class<?>> controllers = new HashSet<>();
+		for (String pkg : packages) {
+			LOGGER.info("Scanning package: {}", pkg);
+			Set<Class<?>> classes = Classes.findInPackage(pkg, projectClassesDir);
+			for (Class<?> cls : classes) {
+				if (null != cls.getAnnotation(RestController.class) || null != cls.getAnnotation(RequestMapping.class)) {
+					controllers.add(cls);
+				}
+			}
+		}
+
+		OpenAPI openAPI = new OpenAPI();
+		Reader reader = new Reader(openAPI);
+		openAPI = reader.read(controllers);
 
 		File out = new File(outputFile);
 		out.getParentFile().mkdirs();
@@ -124,7 +137,7 @@ public class OpenApiSpecGenerator {
 			default -> throw new UnsupportedOperationException("Unsupported output type: " + outputFile);
 		};
 
-		try (FileWriter writer = new FileWriter(out)) {
+		try (FileWriter writer = new FileWriter(out, StandardCharsets.UTF_8)) {
 			mapper.writerWithDefaultPrettyPrinter().writeValue(writer, openAPI);
 		}
 

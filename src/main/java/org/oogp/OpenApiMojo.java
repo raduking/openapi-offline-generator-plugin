@@ -1,13 +1,21 @@
 package org.oogp;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Mojo that generates an OpenAPI YAML file from the compiled Spring controllers.
@@ -39,28 +47,65 @@ public class OpenApiMojo extends AbstractMojo {
 	private String packagesToScan;
 
 	/**
+	 * The project type ("spring"/"jakarta"), default being "spring".
+	 */
+	@Parameter(defaultValue = "spring")
+	private String projectType;
+
+	/**
+	 * The current maven project.
+	 */
+	@Parameter(defaultValue = "${project}", readonly = true, required = true)
+	private MavenProject project;
+
+	/**
 	 * Default constructor.
 	 */
 	public OpenApiMojo() {
 		// empty
 	}
 
+	/**
+	 * @see #execute()
+	 */
 	@Override
 	public void execute() throws MojoExecutionException {
-		try {
+		try (URLClassLoader projectClassLoader = buildProjectClassLoader()) {
 			getLog().info("Generating OpenAPI spec...");
 			getLog().info("   Classes directory: " + classesDir);
 			getLog().info("   Packages to scan: " + packagesToScan);
 			getLog().info("   Output: " + outputFile);
 
-			// Ensure directories exist
+			// ensure directories exist
 			Files.createDirectories(Path.of(outputFile).getParent());
 
-			OpenApiSpecGenerator.generate(packagesToScan, outputFile);
+			System.setProperty("project.build.outputDirectory", project.getBuild().getOutputDirectory());
+			Thread.currentThread().setContextClassLoader(projectClassLoader);
 
-			getLog().info("OpenAPI spec successfully generated at: " + outputFile);
+			switch (ProjectType.fromString(projectType)) {
+				case SPRING -> OpenApiSpecSpringGenerator.generate(packagesToScan, outputFile);
+				case JAKARTA -> OpenApiSpecJakartaGenerator.generate(packagesToScan, outputFile);
+				default -> throw new UnsupportedOperationException("Unknown project type: " + projectType);
+			}
+
 		} catch (Exception e) {
 			throw new MojoExecutionException("Failed to generate OpenAPI spec", e);
 		}
+	}
+
+	/**
+	 * Builds the project class loader.
+	 *
+	 * @return the project class loader
+	 * @throws IOException when an I/O error occurs
+	 * @throws DependencyResolutionRequiredException when project resolution fails
+	 */
+	private URLClassLoader buildProjectClassLoader() throws IOException, DependencyResolutionRequiredException {
+		List<String> elements = project.getRuntimeClasspathElements();
+		List<URL> urls = new ArrayList<>(elements.size());
+		for (String element : elements) {
+			urls.add(new File(element).toURI().toURL());
+		}
+		return new URLClassLoader(urls.toArray(URL[]::new), getClass().getClassLoader());
 	}
 }
