@@ -130,7 +130,8 @@ public class CustomApplicationContext implements ApplicationContext {
 	}
 
 	@Override
-	public <T> Map<String, T> getBeansOfType(final Class<T> type, final boolean includeNonSingletons, final boolean allowEagerInit) throws BeansException {
+	public <T> Map<String, T> getBeansOfType(final Class<T> type, final boolean includeNonSingletons, final boolean allowEagerInit)
+			throws BeansException {
 		return getBeansOfType(type);
 	}
 
@@ -163,7 +164,8 @@ public class CustomApplicationContext implements ApplicationContext {
 	}
 
 	@Override
-	public <A extends Annotation> Set<A> findAllAnnotationsOnBean(final String beanName, final Class<A> annotationType, final boolean allowFactoryBeanInit)
+	public <A extends Annotation> Set<A> findAllAnnotationsOnBean(final String beanName, final Class<A> annotationType,
+			final boolean allowFactoryBeanInit)
 			throws NoSuchBeanDefinitionException {
 		return Classes.unsupportedOperation();
 	}

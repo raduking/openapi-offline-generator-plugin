@@ -79,11 +79,11 @@ components:
           format: double
         subtypeSuffix: {}
         wildcardSubtype: {}
-        wildcardType: {}
         concrete: {}
         charset:
           properties:
             registered: {}
+        wildcardType: {}
     ResponseEntityListString:
       properties:
         headers:
@@ -130,42 +130,6 @@ components:
               format: int64
             date:
               format: int64
-            acceptLanguageAsLocales:
-              items:
-                properties:
-                  language: {}
-                  displayName: {}
-                  country: {}
-                  variant: {}
-                  script: {}
-                  unicodeLocaleAttributes:
-                    uniqueItems: true
-                    items: {}
-                  unicodeLocaleKeys:
-                    uniqueItems: true
-                    items: {}
-                  displayLanguage: {}
-                  displayScript: {}
-                  displayCountry: {}
-                  displayVariant: {}
-                  extensionKeys:
-                    uniqueItems: true
-                    items: {}
-                  iso3Language: {}
-                  iso3Country: {}
-            accessControlAllowHeaders:
-              items: {}
-            accessControlAllowMethods:
-              items:
-                $ref: "#/components/schemas/HttpMethod"
-            accessControlAllowOrigin: {}
-            accessControlExposeHeaders:
-              items: {}
-            accessControlRequestHeaders:
-              items: {}
-            accessControlRequestMethod:
-              $ref: "#/components/schemas/HttpMethod"
-            accessControlAllowCredentials: {}
             acceptLanguage:
               items:
                 properties:
@@ -205,6 +169,13 @@ components:
                 iso3Country: {}
             ifUnmodifiedSince:
               format: int64
+            origin: {}
+            accept:
+              items:
+                $ref: "#/components/schemas/MediaType"
+            acceptPatch:
+              items:
+                $ref: "#/components/schemas/MediaType"
             allow:
               uniqueItems: true
               items:
@@ -214,12 +185,6 @@ components:
                 $ref: "#/components/schemas/HttpRange"
             basicAuth:
               writeOnly: true
-            accept:
-              items:
-                $ref: "#/components/schemas/MediaType"
-            acceptPatch:
-              items:
-                $ref: "#/components/schemas/MediaType"
             bearerAuth:
               writeOnly: true
             etag: {}
@@ -229,11 +194,46 @@ components:
               items: {}
             ifNoneMatch:
               items: {}
-            origin: {}
             pragma: {}
             upgrade: {}
             vary:
               items: {}
+            accessControlAllowCredentials: {}
+            acceptLanguageAsLocales:
+              items:
+                properties:
+                  language: {}
+                  displayName: {}
+                  country: {}
+                  variant: {}
+                  script: {}
+                  unicodeLocaleAttributes:
+                    uniqueItems: true
+                    items: {}
+                  unicodeLocaleKeys:
+                    uniqueItems: true
+                    items: {}
+                  displayLanguage: {}
+                  displayScript: {}
+                  displayCountry: {}
+                  displayVariant: {}
+                  extensionKeys:
+                    uniqueItems: true
+                    items: {}
+                  iso3Language: {}
+                  iso3Country: {}
+            accessControlAllowHeaders:
+              items: {}
+            accessControlAllowMethods:
+              items:
+                $ref: "#/components/schemas/HttpMethod"
+            accessControlAllowOrigin: {}
+            accessControlExposeHeaders:
+              items: {}
+            accessControlRequestHeaders:
+              items: {}
+            accessControlRequestMethod:
+              $ref: "#/components/schemas/HttpMethod"
           additionalProperties:
             items: {}
         body:
@@ -288,42 +288,6 @@ components:
               format: int64
             date:
               format: int64
-            acceptLanguageAsLocales:
-              items:
-                properties:
-                  language: {}
-                  displayName: {}
-                  country: {}
-                  variant: {}
-                  script: {}
-                  unicodeLocaleAttributes:
-                    uniqueItems: true
-                    items: {}
-                  unicodeLocaleKeys:
-                    uniqueItems: true
-                    items: {}
-                  displayLanguage: {}
-                  displayScript: {}
-                  displayCountry: {}
-                  displayVariant: {}
-                  extensionKeys:
-                    uniqueItems: true
-                    items: {}
-                  iso3Language: {}
-                  iso3Country: {}
-            accessControlAllowHeaders:
-              items: {}
-            accessControlAllowMethods:
-              items:
-                $ref: "#/components/schemas/HttpMethod"
-            accessControlAllowOrigin: {}
-            accessControlExposeHeaders:
-              items: {}
-            accessControlRequestHeaders:
-              items: {}
-            accessControlRequestMethod:
-              $ref: "#/components/schemas/HttpMethod"
-            accessControlAllowCredentials: {}
             acceptLanguage:
               items:
                 properties:
@@ -363,6 +327,13 @@ components:
                 iso3Country: {}
             ifUnmodifiedSince:
               format: int64
+            origin: {}
+            accept:
+              items:
+                $ref: "#/components/schemas/MediaType"
+            acceptPatch:
+              items:
+                $ref: "#/components/schemas/MediaType"
             allow:
               uniqueItems: true
               items:
@@ -372,12 +343,6 @@ components:
                 $ref: "#/components/schemas/HttpRange"
             basicAuth:
               writeOnly: true
-            accept:
-              items:
-                $ref: "#/components/schemas/MediaType"
-            acceptPatch:
-              items:
-                $ref: "#/components/schemas/MediaType"
             bearerAuth:
               writeOnly: true
             etag: {}
@@ -387,11 +352,46 @@ components:
               items: {}
             ifNoneMatch:
               items: {}
-            origin: {}
             pragma: {}
             upgrade: {}
             vary:
               items: {}
+            accessControlAllowCredentials: {}
+            acceptLanguageAsLocales:
+              items:
+                properties:
+                  language: {}
+                  displayName: {}
+                  country: {}
+                  variant: {}
+                  script: {}
+                  unicodeLocaleAttributes:
+                    uniqueItems: true
+                    items: {}
+                  unicodeLocaleKeys:
+                    uniqueItems: true
+                    items: {}
+                  displayLanguage: {}
+                  displayScript: {}
+                  displayCountry: {}
+                  displayVariant: {}
+                  extensionKeys:
+                    uniqueItems: true
+                    items: {}
+                  iso3Language: {}
+                  iso3Country: {}
+            accessControlAllowHeaders:
+              items: {}
+            accessControlAllowMethods:
+              items:
+                $ref: "#/components/schemas/HttpMethod"
+            accessControlAllowOrigin: {}
+            accessControlExposeHeaders:
+              items: {}
+            accessControlRequestHeaders:
+              items: {}
+            accessControlRequestMethod:
+              $ref: "#/components/schemas/HttpMethod"
           additionalProperties:
             items: {}
         body:
@@ -402,7 +402,7 @@ components:
           $ref: "#/components/schemas/HttpStatusCode"
     UserCacheInfo:
       properties:
-        tmUserId: {}
+        userId: {}
         geoHash: {}
         info:
           items: {}
