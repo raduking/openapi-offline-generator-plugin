@@ -15,20 +15,20 @@ public class InfoController {
 
 	private final String name;
 
-	public InfoController(String name) {
+	public InfoController(final String name) {
 		this.name = name;
 	}
 
 	@SuppressWarnings("unused")
 	@GetMapping("/user/{userId}")
-	public ResponseEntity<UserCacheInfo> getUserCacheInfo(@PathVariable String userId) {
+	public ResponseEntity<UserCacheInfo> getUserCacheInfo(@PathVariable final String userId) {
 		UserCacheInfo result = UserCacheInfo.builder().build();
 		return ResponseEntity.ok(result);
 	}
 
 	@SuppressWarnings("unused")
 	@GetMapping("/users")
-	public ResponseEntity<List<String>> getUsers(@RequestParam(required = false) Integer count) {
+	public ResponseEntity<List<String>> getUsers(@RequestParam(required = false) final Integer count) {
 		List<String> result = List.of("one", "two", "three");
 		return ResponseEntity.ok(result);
 	}

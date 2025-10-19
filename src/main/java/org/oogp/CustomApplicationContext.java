@@ -38,22 +38,22 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	private AutowireCapableBeanFactory autowireCapableBeanFactory;
 
-	public CustomApplicationContext(ClassLoader classLoader) {
+	public CustomApplicationContext(final ClassLoader classLoader) {
 		this.classLoader = classLoader;
 		this.autowireCapableBeanFactory = new CustomAutowireCapableBeanFactory(this);
 	}
 
-	public void addBean(BeanMetadata beanMetadata) {
+	public void addBean(final BeanMetadata beanMetadata) {
 		nameMap.put(beanMetadata.beanName(), beanMetadata);
 		classMap.computeIfAbsent(beanMetadata.beanType(), k -> new ArrayList<>()).add(beanMetadata);
 	}
 
-	public void addBean(Object beanInstance) {
+	public void addBean(final Object beanInstance) {
 		Class<?> beanType = beanInstance.getClass();
 		addBean(beanType.getSimpleName(), beanInstance);
 	}
 
-	public void addBean(String beanName, Object beanInstance) {
+	public void addBean(final String beanName, final Object beanInstance) {
 		BeanMetadata beanMetadata = BeanMetadata.of(beanName, beanInstance);
 		addBean(beanMetadata);
 	}
@@ -64,7 +64,7 @@ public class CustomApplicationContext implements ApplicationContext {
 	}
 
 	@Override
-	public boolean containsBeanDefinition(String beanName) {
+	public boolean containsBeanDefinition(final String beanName) {
 		return nameMap.containsKey(beanName);
 	}
 
@@ -79,27 +79,27 @@ public class CustomApplicationContext implements ApplicationContext {
 	}
 
 	@Override
-	public <T> ObjectProvider<T> getBeanProvider(Class<T> requiredType, boolean allowEagerInit) {
+	public <T> ObjectProvider<T> getBeanProvider(final Class<T> requiredType, final boolean allowEagerInit) {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public <T> ObjectProvider<T> getBeanProvider(ResolvableType requiredType, boolean allowEagerInit) {
+	public <T> ObjectProvider<T> getBeanProvider(final ResolvableType requiredType, final boolean allowEagerInit) {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public String[] getBeanNamesForType(ResolvableType type) {
+	public String[] getBeanNamesForType(final ResolvableType type) {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public String[] getBeanNamesForType(ResolvableType type, boolean includeNonSingletons, boolean allowEagerInit) {
+	public String[] getBeanNamesForType(final ResolvableType type, final boolean includeNonSingletons, final boolean allowEagerInit) {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public String[] getBeanNamesForType(Class<?> type) {
+	public String[] getBeanNamesForType(final Class<?> type) {
 		List<String> result = new ArrayList<>();
 		for (Map.Entry<Class<?>, List<BeanMetadata>> entry : classMap.entrySet()) {
 			if (type.isAssignableFrom(entry.getKey())) {
@@ -112,12 +112,12 @@ public class CustomApplicationContext implements ApplicationContext {
 	}
 
 	@Override
-	public String[] getBeanNamesForType(Class<?> type, boolean includeNonSingletons, boolean allowEagerInit) {
+	public String[] getBeanNamesForType(final Class<?> type, final boolean includeNonSingletons, final boolean allowEagerInit) {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public <T> Map<String, T> getBeansOfType(Class<T> type) throws BeansException {
+	public <T> Map<String, T> getBeansOfType(final Class<T> type) throws BeansException {
 		Map<String, Object> result = new HashMap<>();
 		for (Map.Entry<Class<?>, List<BeanMetadata>> entry : classMap.entrySet()) {
 			if (type.isAssignableFrom(entry.getKey())) {
@@ -130,17 +130,17 @@ public class CustomApplicationContext implements ApplicationContext {
 	}
 
 	@Override
-	public <T> Map<String, T> getBeansOfType(Class<T> type, boolean includeNonSingletons, boolean allowEagerInit) throws BeansException {
+	public <T> Map<String, T> getBeansOfType(final Class<T> type, final boolean includeNonSingletons, final boolean allowEagerInit) throws BeansException {
 		return getBeansOfType(type);
 	}
 
 	@Override
-	public String[] getBeanNamesForAnnotation(Class<? extends Annotation> annotationType) {
+	public String[] getBeanNamesForAnnotation(final Class<? extends Annotation> annotationType) {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) throws BeansException {
+	public Map<String, Object> getBeansWithAnnotation(final Class<? extends Annotation> annotationType) throws BeansException {
 		Map<String, Object> result = new HashMap<>();
 		for (Map.Entry<String, BeanMetadata> entry : nameMap.entrySet()) {
 			BeanMetadata beanMetadata = entry.getValue();
@@ -152,29 +152,29 @@ public class CustomApplicationContext implements ApplicationContext {
 	}
 
 	@Override
-	public <A extends Annotation> A findAnnotationOnBean(String beanName, Class<A> annotationType) throws NoSuchBeanDefinitionException {
+	public <A extends Annotation> A findAnnotationOnBean(final String beanName, final Class<A> annotationType) throws NoSuchBeanDefinitionException {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public <A extends Annotation> A findAnnotationOnBean(String beanName, Class<A> annotationType, boolean allowFactoryBeanInit)
+	public <A extends Annotation> A findAnnotationOnBean(final String beanName, final Class<A> annotationType, final boolean allowFactoryBeanInit)
 			throws NoSuchBeanDefinitionException {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public <A extends Annotation> Set<A> findAllAnnotationsOnBean(String beanName, Class<A> annotationType, boolean allowFactoryBeanInit)
+	public <A extends Annotation> Set<A> findAllAnnotationsOnBean(final String beanName, final Class<A> annotationType, final boolean allowFactoryBeanInit)
 			throws NoSuchBeanDefinitionException {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public Object getBean(String name) throws BeansException {
+	public Object getBean(final String name) throws BeansException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
+	public <T> T getBean(final String name, final Class<T> requiredType) throws BeansException {
 		BeanMetadata beanMetadata = nameMap.get(name);
 		if (null == beanMetadata) {
 			throw new NoSuchBeanDefinitionException("No bean available for name: " + name);
@@ -187,57 +187,57 @@ public class CustomApplicationContext implements ApplicationContext {
 	}
 
 	@Override
-	public Object getBean(String name, Object... args) throws BeansException {
+	public Object getBean(final String name, final Object... args) throws BeansException {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public <T> T getBean(Class<T> requiredType) throws BeansException {
+	public <T> T getBean(final Class<T> requiredType) throws BeansException {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public <T> T getBean(Class<T> requiredType, Object... args) throws BeansException {
+	public <T> T getBean(final Class<T> requiredType, final Object... args) throws BeansException {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public <T> ObjectProvider<T> getBeanProvider(Class<T> requiredType) {
+	public <T> ObjectProvider<T> getBeanProvider(final Class<T> requiredType) {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public <T> ObjectProvider<T> getBeanProvider(ResolvableType requiredType) {
+	public <T> ObjectProvider<T> getBeanProvider(final ResolvableType requiredType) {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public boolean containsBean(String name) {
+	public boolean containsBean(final String name) {
 		return nameMap.containsKey(name);
 	}
 
 	@Override
-	public boolean isSingleton(String name) throws NoSuchBeanDefinitionException {
+	public boolean isSingleton(final String name) throws NoSuchBeanDefinitionException {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public boolean isPrototype(String name) throws NoSuchBeanDefinitionException {
+	public boolean isPrototype(final String name) throws NoSuchBeanDefinitionException {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public boolean isTypeMatch(String name, ResolvableType typeToMatch) throws NoSuchBeanDefinitionException {
+	public boolean isTypeMatch(final String name, final ResolvableType typeToMatch) throws NoSuchBeanDefinitionException {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public boolean isTypeMatch(String name, Class<?> typeToMatch) throws NoSuchBeanDefinitionException {
+	public boolean isTypeMatch(final String name, final Class<?> typeToMatch) throws NoSuchBeanDefinitionException {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public Class<?> getType(String name) throws NoSuchBeanDefinitionException {
+	public Class<?> getType(final String name) throws NoSuchBeanDefinitionException {
 		BeanMetadata beanMetadata = nameMap.get(name);
 		if (null == beanMetadata) {
 			throw new NoSuchBeanDefinitionException("No bean available for name: " + name);
@@ -246,12 +246,12 @@ public class CustomApplicationContext implements ApplicationContext {
 	}
 
 	@Override
-	public Class<?> getType(String name, boolean allowFactoryBeanInit) throws NoSuchBeanDefinitionException {
+	public Class<?> getType(final String name, final boolean allowFactoryBeanInit) throws NoSuchBeanDefinitionException {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public String[] getAliases(String name) {
+	public String[] getAliases(final String name) {
 		return Classes.unsupportedOperation();
 	}
 
@@ -261,38 +261,38 @@ public class CustomApplicationContext implements ApplicationContext {
 	}
 
 	@Override
-	public boolean containsLocalBean(String name) {
+	public boolean containsLocalBean(final String name) {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
+	public String getMessage(final String code, final Object[] args, final String defaultMessage, final Locale locale) {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public String getMessage(String code, Object[] args, Locale locale) throws NoSuchMessageException {
+	public String getMessage(final String code, final Object[] args, final Locale locale) throws NoSuchMessageException {
 		LOGGER.info("code: {}, args: {}, locale: {}", code, args, locale);
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public String getMessage(MessageSourceResolvable resolvable, Locale locale) throws NoSuchMessageException {
+	public String getMessage(final MessageSourceResolvable resolvable, final Locale locale) throws NoSuchMessageException {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public void publishEvent(Object event) {
+	public void publishEvent(final Object event) {
 		Classes.unsupportedOperation();
 	}
 
 	@Override
-	public Resource[] getResources(String locationPattern) throws IOException {
+	public Resource[] getResources(final String locationPattern) throws IOException {
 		return Classes.unsupportedOperation();
 	}
 
 	@Override
-	public Resource getResource(String location) {
+	public Resource getResource(final String location) {
 		return Classes.unsupportedOperation();
 	}
 

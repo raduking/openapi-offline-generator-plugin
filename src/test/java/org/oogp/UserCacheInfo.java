@@ -3,10 +3,10 @@ package org.oogp;
 import java.util.ArrayList;
 import java.util.List;
 
-public record UserCacheInfo(String tmUserId, String geoHash, List<String> info) {
+public record UserCacheInfo(String userId, String geoHash, List<String> info) {
 
-	private UserCacheInfo(Builder builder) {
-		this(builder.tmUserId, builder.geoHash, builder.info);
+	private UserCacheInfo(final Builder builder) {
+		this(builder.userId, builder.geoHash, builder.info);
 	}
 
 	public static Builder builder() {
@@ -15,7 +15,7 @@ public record UserCacheInfo(String tmUserId, String geoHash, List<String> info) 
 
 	public static final class Builder {
 
-		private String tmUserId;
+		private String userId;
 
 		private String geoHash;
 
@@ -29,17 +29,17 @@ public record UserCacheInfo(String tmUserId, String geoHash, List<String> info) 
 			return new UserCacheInfo(this);
 		}
 
-		public Builder tmUserId(String tmUserId) {
-			this.tmUserId = tmUserId;
+		public Builder userId(final String userId) {
+			this.userId = userId;
 			return this;
 		}
 
-		public Builder geoHash(String geoHash) {
+		public Builder geoHash(final String geoHash) {
 			this.geoHash = geoHash;
 			return this;
 		}
 
-		public Builder info(List<String> info) {
+		public Builder info(final List<String> info) {
 			this.info.clear();
 			this.info.addAll(info);
 			return this;

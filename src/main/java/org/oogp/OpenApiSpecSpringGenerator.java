@@ -97,7 +97,7 @@ public class OpenApiSpecSpringGenerator {
 	 *     <li>{@code args[1]} → output file path</li>
 	 *     </ul>
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		if (args.length < 2) {
 			LOGGER.error("Usage: OpenApiSpecGenerator <packagesToScan> <outputFile>");
 			System.exit(1);
@@ -118,7 +118,7 @@ public class OpenApiSpecSpringGenerator {
 	 * @param outputFile output YAML or JSON file path
 	 * @throws IOException when an I/O error occurs
 	 */
-	public static void generate(String packagesToScan, String outputFile) throws IOException {
+	public static void generate(final String packagesToScan, final String outputFile) throws IOException {
 		Set<String> packages = Arrays.stream(packagesToScan.split(","))
 				.map(String::trim)
 				.filter(p -> !p.isEmpty())
@@ -163,7 +163,7 @@ public class OpenApiSpecSpringGenerator {
 		LOGGER.info("Generated OpenAPI spec at {}", out.getAbsolutePath());
 	}
 
-	private static void processController(OpenAPI openAPI, Paths paths, Class<?> controller) {
+	private static void processController(final OpenAPI openAPI, final Paths paths, final Class<?> controller) {
 		String basePath = "";
 		RequestMapping classMapping = controller.getAnnotation(RequestMapping.class);
 		if (classMapping != null && classMapping.value().length > 0) {
@@ -212,7 +212,7 @@ public class OpenApiSpecSpringGenerator {
 		}
 	}
 
-	private static String firstValue(String[] arr) {
+	private static String firstValue(final String[] arr) {
 		return (arr != null && arr.length > 0) ? arr[0] : "";
 	}
 }

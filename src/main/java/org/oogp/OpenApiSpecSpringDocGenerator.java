@@ -106,7 +106,7 @@ public class OpenApiSpecSpringDocGenerator {
 	 *     <li>{@code args[1]} → output file path</li>
 	 *     </ul>
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		if (args.length < 2) {
 			LOGGER.error("Usage: OpenApiSpecGenerator <packagesToScan> <outputFile>");
 			System.exit(1);
@@ -127,7 +127,7 @@ public class OpenApiSpecSpringDocGenerator {
 	 * @param outputFile output YAML or JSON file path
 	 * @throws IOException when an I/O error occurs
 	 */
-	public static void generate(String packagesToScan, String outputFile) throws IOException {
+	public static void generate(final String packagesToScan, final String outputFile) throws IOException {
 		Set<String> packages = Arrays.stream(packagesToScan.split(","))
 				.map(String::trim)
 				.filter(p -> !p.isEmpty())
@@ -261,7 +261,7 @@ public class OpenApiSpecSpringDocGenerator {
 		LOGGER.info("Generated OpenAPI spec at {}", out.getAbsolutePath());
 	}
 
-	private static RequestMappingHandlerMapping createHandlerMapping(ApplicationContext context, Object controller) {
+	private static RequestMappingHandlerMapping createHandlerMapping(final ApplicationContext context, final Object controller) {
 		RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping();
 		handlerMapping.setApplicationContext(context);
 		handlerMapping.afterPropertiesSet();
@@ -269,7 +269,7 @@ public class OpenApiSpecSpringDocGenerator {
 		return handlerMapping;
 	}
 
-	private static void registerControllerMethods(RequestMappingHandlerMapping handlerMapping, Object controller) {
+	private static void registerControllerMethods(final RequestMappingHandlerMapping handlerMapping, final Object controller) {
 		for (Method method : Methods.getAllDeclaredInHierarchy(controller.getClass())) {
 			RequestMapping methodMapping = method.getAnnotation(RequestMapping.class);
 			if (methodMapping != null) {

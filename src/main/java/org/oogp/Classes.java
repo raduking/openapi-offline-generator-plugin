@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apiphany.lang.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,15 +26,14 @@ public class Classes {
 
 	public static Path detectDirectory() {
 		String buildOutput = System.getProperty("project.build.outputDirectory");
-		if (buildOutput != null && !buildOutput.isBlank()) {
+		if (Strings.isNotEmpty(buildOutput)) {
 			return Path.of(buildOutput);
-		} else {
-			LOGGER.warn("Missing 'project.build.outputDirectory' property");
 		}
+		LOGGER.error("Missing 'project.build.outputDirectory' property");
 		throw new IllegalStateException("Could not detect project classes directory");
 	}
 
-	public static Set<Class<?>> findInPackage(String basePackage, Path classesDir) {
+	public static Set<Class<?>> findInPackage(final String basePackage, final Path classesDir) {
 		Set<Class<?>> classes = new HashSet<>();
 		File directory = classesDir.resolve(basePackage.replace('.', '/')).toFile();
 		ClassLoader projectLoader = Thread.currentThread().getContextClassLoader();
@@ -45,7 +45,8 @@ public class Classes {
 		return classes;
 	}
 
-	public static void findClassesInDirectory(File directory, String packageName, Set<Class<?>> classes, ClassLoader classLoader) {
+	public static void findClassesInDirectory(final File directory, final String packageName, final Set<Class<?>> classes,
+			final ClassLoader classLoader) {
 		for (File file : Objects.requireNonNull(directory.listFiles())) {
 			if (file.isDirectory()) {
 				findClassesInDirectory(file, packageName + "." + file.getName(), classes, classLoader);

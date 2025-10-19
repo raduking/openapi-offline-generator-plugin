@@ -18,14 +18,14 @@ import io.swagger.v3.oas.models.OpenAPI;
 public class SpringDocOpenApiResource extends OpenApiResource {
 
 	protected SpringDocOpenApiResource(
-			String groupName,
-			PropertyResolverUtils propertyResolverUtils,
-			OpenAPIService openAPIService,
-			AbstractRequestService requestBuilder,
-			GenericResponseService responseBuilder,
-			OperationService operationService,
-			SpringDocCustomizers springDocCustomizers,
-			SpringDocProviders springDocProviders) {
+			final String groupName,
+			final PropertyResolverUtils propertyResolverUtils,
+			final OpenAPIService openAPIService,
+			final AbstractRequestService requestBuilder,
+			final GenericResponseService responseBuilder,
+			final OperationService operationService,
+			final SpringDocCustomizers springDocCustomizers,
+			final SpringDocProviders springDocProviders) {
 		super(groupName,
 				() -> openAPIService,
 				requestBuilder,
@@ -37,12 +37,12 @@ public class SpringDocOpenApiResource extends OpenApiResource {
 	}
 
 	@Override
-	protected String getServerUrl(HttpServletRequest request, String apiDocsUrl) {
+	protected String getServerUrl(final HttpServletRequest request, final String apiDocsUrl) {
 		return null;
 	}
 
 	@Override
-	public OpenAPI getOpenApi(String serverBaseUrl, Locale locale) {
+	public OpenAPI getOpenApi(final String serverBaseUrl, final Locale locale) {
 		return super.getOpenApi(serverBaseUrl, locale);
 	}
 
