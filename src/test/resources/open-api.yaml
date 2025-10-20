@@ -13,6 +13,7 @@ paths:
         in: query
         required: false
         schema:
+          type: integer
           format: int32
       responses:
         "200":
@@ -20,7 +21,9 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/ResponseEntityListString"
+                type: array
+                items:
+                  type: string
   /api/test/info/user/{userId}:
     get:
       tags:
@@ -30,379 +33,25 @@ paths:
       - name: userId
         in: path
         required: true
-        schema: {}
+        schema:
+          type: string
       responses:
         "200":
           description: OK
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/ResponseEntityUserCacheInfo"
+                $ref: "#/components/schemas/UserCacheInfo"
 components:
   schemas:
-    ContentDisposition:
-      properties:
-        type: {}
-        name: {}
-        filename: {}
-        charset:
-          properties:
-            registered: {}
-        size:
-          format: int64
-        creationDate:
-          format: date-time
-        modificationDate:
-          format: date-time
-        readDate:
-          format: date-time
-        attachment: {}
-        formData: {}
-        inline: {}
-    HttpMethod: {}
-    HttpRange: {}
-    HttpStatusCode:
-      properties:
-        error: {}
-        is1xxInformational: {}
-        is2xxSuccessful: {}
-        is3xxRedirection: {}
-        is4xxClientError: {}
-        is5xxServerError: {}
-    MediaType:
-      properties:
-        type: {}
-        subtype: {}
-        parameters:
-          additionalProperties: {}
-        qualityValue:
-          format: double
-        subtypeSuffix: {}
-        wildcardSubtype: {}
-        concrete: {}
-        charset:
-          properties:
-            registered: {}
-        wildcardType: {}
-    ResponseEntityListString:
-      properties:
-        headers:
-          properties:
-            connection:
-              items: {}
-            ifModifiedSince:
-              format: int64
-            contentType:
-              $ref: "#/components/schemas/MediaType"
-            contentLength:
-              format: int64
-            empty: {}
-            location:
-              format: uri
-            host:
-              properties:
-                hostString: {}
-                address:
-                  properties:
-                    hostAddress: {}
-                    address:
-                      format: byte
-                    hostName: {}
-                    linkLocalAddress: {}
-                    anyLocalAddress: {}
-                    multicastAddress: {}
-                    loopbackAddress: {}
-                    siteLocalAddress: {}
-                    mcglobal: {}
-                    mcnodeLocal: {}
-                    mclinkLocal: {}
-                    mcsiteLocal: {}
-                    mcorgLocal: {}
-                    canonicalHostName: {}
-                port:
-                  format: int32
-                unresolved: {}
-                hostName: {}
-            all:
-              additionalProperties: {}
-              writeOnly: true
-            lastModified:
-              format: int64
-            date:
-              format: int64
-            acceptLanguage:
-              items:
-                properties:
-                  range: {}
-                  weight:
-                    format: double
-            contentDisposition:
-              $ref: "#/components/schemas/ContentDisposition"
-            accessControlMaxAge:
-              format: int64
-            acceptCharset:
-              items:
-                properties:
-                  registered: {}
-            cacheControl: {}
-            contentLanguage:
-              properties:
-                language: {}
-                displayName: {}
-                country: {}
-                variant: {}
-                script: {}
-                unicodeLocaleAttributes:
-                  uniqueItems: true
-                  items: {}
-                unicodeLocaleKeys:
-                  uniqueItems: true
-                  items: {}
-                displayLanguage: {}
-                displayScript: {}
-                displayCountry: {}
-                displayVariant: {}
-                extensionKeys:
-                  uniqueItems: true
-                  items: {}
-                iso3Language: {}
-                iso3Country: {}
-            ifUnmodifiedSince:
-              format: int64
-            origin: {}
-            accept:
-              items:
-                $ref: "#/components/schemas/MediaType"
-            acceptPatch:
-              items:
-                $ref: "#/components/schemas/MediaType"
-            allow:
-              uniqueItems: true
-              items:
-                $ref: "#/components/schemas/HttpMethod"
-            range:
-              items:
-                $ref: "#/components/schemas/HttpRange"
-            basicAuth:
-              writeOnly: true
-            bearerAuth:
-              writeOnly: true
-            etag: {}
-            expires:
-              format: int64
-            ifMatch:
-              items: {}
-            ifNoneMatch:
-              items: {}
-            pragma: {}
-            upgrade: {}
-            vary:
-              items: {}
-            accessControlAllowCredentials: {}
-            acceptLanguageAsLocales:
-              items:
-                properties:
-                  language: {}
-                  displayName: {}
-                  country: {}
-                  variant: {}
-                  script: {}
-                  unicodeLocaleAttributes:
-                    uniqueItems: true
-                    items: {}
-                  unicodeLocaleKeys:
-                    uniqueItems: true
-                    items: {}
-                  displayLanguage: {}
-                  displayScript: {}
-                  displayCountry: {}
-                  displayVariant: {}
-                  extensionKeys:
-                    uniqueItems: true
-                    items: {}
-                  iso3Language: {}
-                  iso3Country: {}
-            accessControlAllowHeaders:
-              items: {}
-            accessControlAllowMethods:
-              items:
-                $ref: "#/components/schemas/HttpMethod"
-            accessControlAllowOrigin: {}
-            accessControlExposeHeaders:
-              items: {}
-            accessControlRequestHeaders:
-              items: {}
-            accessControlRequestMethod:
-              $ref: "#/components/schemas/HttpMethod"
-          additionalProperties:
-            items: {}
-        body:
-          items: {}
-        statusCodeValue:
-          format: int32
-        statusCode:
-          $ref: "#/components/schemas/HttpStatusCode"
-    ResponseEntityUserCacheInfo:
-      properties:
-        headers:
-          properties:
-            connection:
-              items: {}
-            ifModifiedSince:
-              format: int64
-            contentType:
-              $ref: "#/components/schemas/MediaType"
-            contentLength:
-              format: int64
-            empty: {}
-            location:
-              format: uri
-            host:
-              properties:
-                hostString: {}
-                address:
-                  properties:
-                    hostAddress: {}
-                    address:
-                      format: byte
-                    hostName: {}
-                    linkLocalAddress: {}
-                    anyLocalAddress: {}
-                    multicastAddress: {}
-                    loopbackAddress: {}
-                    siteLocalAddress: {}
-                    mcglobal: {}
-                    mcnodeLocal: {}
-                    mclinkLocal: {}
-                    mcsiteLocal: {}
-                    mcorgLocal: {}
-                    canonicalHostName: {}
-                port:
-                  format: int32
-                unresolved: {}
-                hostName: {}
-            all:
-              additionalProperties: {}
-              writeOnly: true
-            lastModified:
-              format: int64
-            date:
-              format: int64
-            acceptLanguage:
-              items:
-                properties:
-                  range: {}
-                  weight:
-                    format: double
-            contentDisposition:
-              $ref: "#/components/schemas/ContentDisposition"
-            accessControlMaxAge:
-              format: int64
-            acceptCharset:
-              items:
-                properties:
-                  registered: {}
-            cacheControl: {}
-            contentLanguage:
-              properties:
-                language: {}
-                displayName: {}
-                country: {}
-                variant: {}
-                script: {}
-                unicodeLocaleAttributes:
-                  uniqueItems: true
-                  items: {}
-                unicodeLocaleKeys:
-                  uniqueItems: true
-                  items: {}
-                displayLanguage: {}
-                displayScript: {}
-                displayCountry: {}
-                displayVariant: {}
-                extensionKeys:
-                  uniqueItems: true
-                  items: {}
-                iso3Language: {}
-                iso3Country: {}
-            ifUnmodifiedSince:
-              format: int64
-            origin: {}
-            accept:
-              items:
-                $ref: "#/components/schemas/MediaType"
-            acceptPatch:
-              items:
-                $ref: "#/components/schemas/MediaType"
-            allow:
-              uniqueItems: true
-              items:
-                $ref: "#/components/schemas/HttpMethod"
-            range:
-              items:
-                $ref: "#/components/schemas/HttpRange"
-            basicAuth:
-              writeOnly: true
-            bearerAuth:
-              writeOnly: true
-            etag: {}
-            expires:
-              format: int64
-            ifMatch:
-              items: {}
-            ifNoneMatch:
-              items: {}
-            pragma: {}
-            upgrade: {}
-            vary:
-              items: {}
-            accessControlAllowCredentials: {}
-            acceptLanguageAsLocales:
-              items:
-                properties:
-                  language: {}
-                  displayName: {}
-                  country: {}
-                  variant: {}
-                  script: {}
-                  unicodeLocaleAttributes:
-                    uniqueItems: true
-                    items: {}
-                  unicodeLocaleKeys:
-                    uniqueItems: true
-                    items: {}
-                  displayLanguage: {}
-                  displayScript: {}
-                  displayCountry: {}
-                  displayVariant: {}
-                  extensionKeys:
-                    uniqueItems: true
-                    items: {}
-                  iso3Language: {}
-                  iso3Country: {}
-            accessControlAllowHeaders:
-              items: {}
-            accessControlAllowMethods:
-              items:
-                $ref: "#/components/schemas/HttpMethod"
-            accessControlAllowOrigin: {}
-            accessControlExposeHeaders:
-              items: {}
-            accessControlRequestHeaders:
-              items: {}
-            accessControlRequestMethod:
-              $ref: "#/components/schemas/HttpMethod"
-          additionalProperties:
-            items: {}
-        body:
-          $ref: "#/components/schemas/UserCacheInfo"
-        statusCodeValue:
-          format: int32
-        statusCode:
-          $ref: "#/components/schemas/HttpStatusCode"
     UserCacheInfo:
+      type: object
       properties:
-        userId: {}
-        geoHash: {}
+        userId:
+          type: string
+        geoHash:
+          type: string
         info:
-          items: {}
+          type: array
+          items:
+            type: string

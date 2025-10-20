@@ -36,11 +36,11 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	private final ClassLoader classLoader;
 
-	private AutowireCapableBeanFactory autowireCapableBeanFactory;
+	private CustomBeanFactory customBeanFactory;
 
 	public CustomApplicationContext(final ClassLoader classLoader) {
 		this.classLoader = classLoader;
-		this.autowireCapableBeanFactory = new CustomAutowireCapableBeanFactory(this);
+		this.customBeanFactory = new CustomBeanFactory(this);
 	}
 
 	public void addBean(final BeanMetadata beanMetadata) {
@@ -56,6 +56,10 @@ public class CustomApplicationContext implements ApplicationContext {
 	public void addBean(final String beanName, final Object beanInstance) {
 		BeanMetadata beanMetadata = BeanMetadata.of(beanName, beanInstance);
 		addBean(beanMetadata);
+	}
+
+	public CustomBeanFactory getCustomBeanFactory() {
+		return customBeanFactory;
 	}
 
 	@Override
@@ -331,7 +335,6 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	public AutowireCapableBeanFactory getAutowireCapableBeanFactory() throws IllegalStateException {
-		return autowireCapableBeanFactory;
+		return getCustomBeanFactory();
 	}
-
 }

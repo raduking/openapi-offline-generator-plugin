@@ -35,7 +35,9 @@ import io.swagger.v3.oas.models.tags.Tag;
 
 /**
  * Utility class responsible for generating an OpenAPI specification (YAML or JSON) from compiled Spring controller
- * classes.
+ * classes. This class tries to implement the raw functionality to parse Spring controllers and it is work in progress.
+ * <p>
+ * TODO: implement full functionality
  * <p>
  * This class can be used both:
  * <ul>
@@ -50,7 +52,7 @@ import io.swagger.v3.oas.models.tags.Tag;
  *
  * <pre>{@code
  * java -cp target/classes:<dependencies> \
- *     org.oogp.OpenApiSpecGenerator \
+ *     org.oogp.OpenApiSpecSpringRawGenerator \
  *     "com.example.app.controller" \
  *     "target/generated/openapi.yaml"
  * }</pre>
@@ -63,12 +65,12 @@ import io.swagger.v3.oas.models.tags.Tag;
  *
  * @author Radu Sebastian LAZIN
  */
-public class OpenApiSpecSpringGenerator {
+public class OpenApiSpecSpringRawGenerator {
 
 	/**
 	 * The logger.
 	 */
-	private static final Logger LOGGER = LoggerFactory.getLogger(OpenApiSpecSpringGenerator.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(OpenApiSpecSpringRawGenerator.class);
 
 	/**
 	 * The path separator.
@@ -78,7 +80,7 @@ public class OpenApiSpecSpringGenerator {
 	/**
 	 * Hide constructor.
 	 */
-	private OpenApiSpecSpringGenerator() {
+	private OpenApiSpecSpringRawGenerator() {
 		// empty
 	}
 

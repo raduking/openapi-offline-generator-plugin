@@ -18,8 +18,15 @@ import org.morphix.reflection.InstanceCreator;
 import org.morphix.reflection.Methods;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.core.converters.AdditionalModelsConverter;
+import org.springdoc.core.converters.FileSupportConverter;
+import org.springdoc.core.converters.PolymorphicModelConverter;
+import org.springdoc.core.converters.PropertyCustomizingConverter;
+import org.springdoc.core.converters.ResponseSupportConverter;
+import org.springdoc.core.converters.SchemaPropertyDeprecatingConverter;
 import org.springdoc.core.customizers.SpringDocCustomizers;
 import org.springdoc.core.discoverer.SpringDocParameterNameDiscoverer;
+import org.springdoc.core.extractor.MethodParameterPojoExtractor;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springdoc.core.providers.ObjectMapperProvider;
 import org.springdoc.core.providers.SpringDocJavadocProvider;
@@ -31,9 +38,12 @@ import org.springdoc.core.service.OperationService;
 import org.springdoc.core.service.RequestBodyService;
 import org.springdoc.core.service.SecurityService;
 import org.springdoc.core.utils.PropertyResolverUtils;
+import org.springdoc.core.utils.SchemaUtils;
+import org.springdoc.core.utils.SpringDocUtils;
 import org.springdoc.webmvc.core.providers.SpringWebMvcProvider;
 import org.springdoc.webmvc.core.service.RequestService;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.DelegatingMessageSource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -41,15 +51,19 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.integration.GenericOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 
 /**
  * Utility class responsible for generating an OpenAPI specification (YAML or JSON) from compiled Spring controller
- * classes.
+ * classes. This class uses a minimal Spring functionality implementation to generate what a Spring application
+ * generates when {@code spring-doc} is configured.
  * <p>
  * This class can be used both:
  * <ul>
@@ -64,7 +78,7 @@ import io.swagger.v3.oas.models.OpenAPI;
  *
  * <pre>{@code
  * java -cp target/classes:<dependencies> \
- *     org.oogp.OpenApiSpecGenerator \
+ *     org.oogp.OpenApiSpecSpringDocGenerator \
  *     "com.example.app.controller" \
  *     "target/generated/openapi.yaml"
  * }</pre>
@@ -160,25 +174,47 @@ public class OpenApiSpecSpringDocGenerator {
 		}
 		context.addBean(context);
 
-		OpenAPI openAPI = new OpenAPI();
+		SpringDocOpenApiResource openApiResource = buildSpringDocOpenApiResource(outputFile, context);
+		OpenAPI openAPI = openApiResource.getOpenApi(null, Locale.ENGLISH);
 
+		File out = new File(outputFile);
+		out.getParentFile().mkdirs();
+
+		boolean isOpenapi31 = openApiResource.getSpringDocConfigProperties().isOpenapi31();
+		ObjectMapper mapper = switch (outputFile) {
+			case String s when s.endsWith(".json") -> isOpenapi31 ? Json31.mapper() : Json.mapper();
+			case String s when (s.endsWith(".yaml") || s.endsWith(".yml")) -> isOpenapi31 ? Yaml31.mapper() : Yaml.mapper();
+			default -> throw new UnsupportedOperationException("Unsupported output type: " + outputFile);
+		};
+
+		try (FileWriter writer = new FileWriter(out, StandardCharsets.UTF_8)) {
+			mapper.writerWithDefaultPrettyPrinter().writeValue(writer, openAPI);
+		}
+
+		LOGGER.info("Generated OpenAPI spec at {}", out.getAbsolutePath());
+	}
+
+	private static SpringDocOpenApiResource buildSpringDocOpenApiResource(final String outputFile, final CustomApplicationContext context) {
 		SpringDocConfigProperties springDocConfigProperties = new SpringDocConfigProperties();
-		springDocConfigProperties.setOverrideWithGenericResponse(false);
-
 		System.setProperty(JsonBuilder.Property.INDENT_OUTPUT, "true");
 		String properties = JsonBuilder.toJson(springDocConfigProperties);
 		LOGGER.info("Spring Doc Config properties: {}", properties);
 
+		SpringDocUtils.getConfig().initExtraSchemas();
+		ObjectMapperProvider objectMapperProvider = new ObjectMapperProvider(springDocConfigProperties);
+		registerModelConverters(springDocConfigProperties, objectMapperProvider);
+
+		DelegatingMessageSource messageSource = new DelegatingMessageSource();
 		PropertyResolverUtils propertyResolverUtils = new PropertyResolverUtils(
-				null,
-				context,
+				context.getCustomBeanFactory(),
+				messageSource,
 				springDocConfigProperties);
 
 		SecurityService securityService = new SecurityService(propertyResolverUtils);
 		SpringDocJavadocProvider springDocJavadocProvider = new SpringDocJavadocProvider();
 
 		OpenAPIService openAPIService = new OpenAPIService(
-				Optional.of(openAPI),
+				Optional.empty(),
 				securityService,
 				springDocConfigProperties,
 				propertyResolverUtils,
@@ -193,8 +229,6 @@ public class OpenApiSpecSpringDocGenerator {
 
 		SpringDocCustomizers springDocCustomizers = new SpringDocCustomizers(
 				Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
-
-		ObjectMapperProvider objectMapperProvider = new ObjectMapperProvider(springDocConfigProperties);
 
 		GenericParameterService genericParameterService = new GenericParameterService(
 				propertyResolverUtils,
@@ -211,7 +245,7 @@ public class OpenApiSpecSpringDocGenerator {
 				requestBodyService,
 				springDocCustomizers,
 				new SpringDocParameterNameDiscoverer(),
-				null);
+				new MethodParameterPojoExtractor(new SchemaUtils(Optional.empty())));
 
 		OperationService operationService = new OperationService(
 				genericParameterService,
@@ -233,7 +267,7 @@ public class OpenApiSpecSpringDocGenerator {
 				Optional.ofNullable(springWebMvcProvider),
 				objectMapperProvider);
 
-		SpringDocOpenApiResource openApiResource = new SpringDocOpenApiResource(
+		return new SpringDocOpenApiResource(
 				outputFile,
 				propertyResolverUtils,
 				openAPIService,
@@ -242,23 +276,6 @@ public class OpenApiSpecSpringDocGenerator {
 				operationService,
 				springDocCustomizers,
 				springDocProviders);
-
-		openAPI = openApiResource.getOpenApi(null, Locale.ENGLISH);
-
-		File out = new File(outputFile);
-		out.getParentFile().mkdirs();
-
-		ObjectMapper mapper = switch (outputFile) {
-			case String s when s.endsWith(".json") -> Json.mapper();
-			case String s when (s.endsWith(".yaml") || s.endsWith(".yml")) -> Yaml.mapper();
-			default -> throw new UnsupportedOperationException("Unsupported output type: " + outputFile);
-		};
-
-		try (FileWriter writer = new FileWriter(out, StandardCharsets.UTF_8)) {
-			mapper.writerWithDefaultPrettyPrinter().writeValue(writer, openAPI);
-		}
-
-		LOGGER.info("Generated OpenAPI spec at {}", out.getAbsolutePath());
 	}
 
 	private static RequestMappingHandlerMapping createHandlerMapping(final ApplicationContext context, final Object controller) {
@@ -285,5 +302,17 @@ public class OpenApiSpecSpringDocGenerator {
 				handlerMapping.registerMapping(mappingInfo, controller, method);
 			}
 		}
+	}
+
+	private static void registerModelConverters(final SpringDocConfigProperties springDocConfigProperties,
+			final ObjectMapperProvider objectMapperProvider) {
+		ModelConverters modelConverters = ModelConverters.getInstance(springDocConfigProperties.isOpenapi31());
+
+		modelConverters.addConverter(new AdditionalModelsConverter(objectMapperProvider));
+		modelConverters.addConverter(new FileSupportConverter(objectMapperProvider));
+		modelConverters.addConverter(new ResponseSupportConverter(objectMapperProvider));
+		modelConverters.addConverter(new SchemaPropertyDeprecatingConverter());
+		modelConverters.addConverter(new PolymorphicModelConverter(objectMapperProvider));
+		modelConverters.addConverter(new PropertyCustomizingConverter(Optional.empty()));
 	}
 }

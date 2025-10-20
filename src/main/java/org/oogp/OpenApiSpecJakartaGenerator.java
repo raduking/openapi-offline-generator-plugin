@@ -41,7 +41,7 @@ import io.swagger.v3.oas.models.OpenAPI;
  *
  * <pre>{@code
  * java -cp target/classes:<dependencies> \
- *     org.oogp.OpenApiSpecGenerator \
+ *     org.oogp.OpenApiSpecJakartaGenerator \
  *     "com.example.app.controller" \
  *     "target/generated/openapi.yaml"
  * }</pre>

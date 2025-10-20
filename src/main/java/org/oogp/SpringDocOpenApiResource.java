@@ -5,6 +5,7 @@ import java.util.Locale;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springdoc.core.customizers.SpringDocCustomizers;
+import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springdoc.core.providers.SpringDocProviders;
 import org.springdoc.core.service.AbstractRequestService;
 import org.springdoc.core.service.GenericResponseService;
@@ -16,6 +17,8 @@ import org.springdoc.webmvc.api.OpenApiResource;
 import io.swagger.v3.oas.models.OpenAPI;
 
 public class SpringDocOpenApiResource extends OpenApiResource {
+
+	private final SpringDocConfigProperties springDocConfigProperties;
 
 	protected SpringDocOpenApiResource(
 			final String groupName,
@@ -34,6 +37,7 @@ public class SpringDocOpenApiResource extends OpenApiResource {
 				propertyResolverUtils.getSpringDocConfigProperties(),
 				springDocProviders,
 				springDocCustomizers);
+		this.springDocConfigProperties = propertyResolverUtils.getSpringDocConfigProperties();
 	}
 
 	@Override
@@ -46,4 +50,7 @@ public class SpringDocOpenApiResource extends OpenApiResource {
 		return super.getOpenApi(serverBaseUrl, locale);
 	}
 
+	public SpringDocConfigProperties getSpringDocConfigProperties() {
+		return springDocConfigProperties;
+	}
 }
