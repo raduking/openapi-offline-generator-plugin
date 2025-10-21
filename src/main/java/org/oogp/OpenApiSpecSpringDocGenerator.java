@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -59,6 +60,12 @@ import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.integration.GenericOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.security.OAuthFlow;
+import io.swagger.v3.oas.models.security.OAuthFlows;
+import io.swagger.v3.oas.models.security.Scopes;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 
 /**
  * Utility class responsible for generating an OpenAPI specification (YAML or JSON) from compiled Spring controller
@@ -177,6 +184,10 @@ public class OpenApiSpecSpringDocGenerator {
 		SpringDocOpenApiResource openApiResource = buildSpringDocOpenApiResource(outputFile, context);
 		OpenAPI openAPI = openApiResource.getOpenApi(null, Locale.ENGLISH);
 
+		configureOAuth2(openAPI);
+
+		addExtensions(openAPI);
+
 		File out = new File(outputFile);
 		out.getParentFile().mkdirs();
 
@@ -288,6 +299,10 @@ public class OpenApiSpecSpringDocGenerator {
 
 	private static void registerControllerMethods(final RequestMappingHandlerMapping handlerMapping, final Object controller) {
 		for (Method method : Methods.getAllDeclaredInHierarchy(controller.getClass())) {
+			if (shouldSkipMethod(method)) {
+				LOGGER.debug("Skipping generated, synthetic, or default interface method: {}", method);
+				continue;
+			}
 			RequestMapping methodMapping = method.getAnnotation(RequestMapping.class);
 			if (methodMapping != null) {
 				RequestMappingInfo mappingInfo = RequestMappingInfo
@@ -304,6 +319,18 @@ public class OpenApiSpecSpringDocGenerator {
 		}
 	}
 
+	/**
+	 * Determines whether a given method should be skipped from OpenAPI registration. Skips generated interface wrappers
+	 * (like "_fetchData"), synthetic/bridge methods, and default interface implementations.
+	 */
+	private static boolean shouldSkipMethod(final Method method) {
+		// OpenAPI-generated default wrappers often start with "_" or are declared default
+		if (method.getName().startsWith("_")) {
+			return true;
+		}
+		return method.isDefault() || method.isSynthetic() || method.isBridge();
+	}
+
 	private static void registerModelConverters(final SpringDocConfigProperties springDocConfigProperties,
 			final ObjectMapperProvider objectMapperProvider) {
 		ModelConverters modelConverters = ModelConverters.getInstance(springDocConfigProperties.isOpenapi31());
@@ -314,5 +341,28 @@ public class OpenApiSpecSpringDocGenerator {
 		modelConverters.addConverter(new SchemaPropertyDeprecatingConverter());
 		modelConverters.addConverter(new PolymorphicModelConverter(objectMapperProvider));
 		modelConverters.addConverter(new PropertyCustomizingConverter(Optional.empty()));
+	}
+
+	private static void configureOAuth2(final OpenAPI openAPI) {
+		// TODO: parameterize these
+		openAPI.setServers(List.of(new Server().url("/")));
+		OAuthFlows flows = new OAuthFlows()
+				.implicit(new OAuthFlow()
+						.authorizationUrl("http://automatically/replaced/on/runtime")
+						.scopes(new Scopes()) // empty
+				);
+		SecurityScheme oAuth2Scheme = new SecurityScheme()
+				.type(SecurityScheme.Type.OAUTH2)
+				.flows(flows);
+		openAPI.schemaRequirement("OAuth2", oAuth2Scheme);
+		openAPI.addSecurityItem(new SecurityRequirement().addList("OAuth2"));
+	}
+
+	private static void addExtensions(final OpenAPI openAPI) {
+		// TODO: parameterize these
+		openAPI.addExtension("x-version", null);
+		openAPI.addExtension("x-groupId", null);
+		openAPI.addExtension("x-artifactId", null);
+		openAPI.addExtension("x-internal-hostname", "http://gst-partner-service:8080");
 	}
 }
