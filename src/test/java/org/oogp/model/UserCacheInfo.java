@@ -1,4 +1,4 @@
-package org.oogp.api.model;
+package org.oogp.model;
 
 import java.util.ArrayList;
 import java.util.List;
