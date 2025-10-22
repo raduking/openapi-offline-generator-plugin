@@ -89,7 +89,7 @@ public class OpenApiSpecJakartaGenerator {
 			System.exit(1);
 		}
 		try {
-			GeneratorProperties properties = Classes.convertFromStringArray(args, GeneratorProperties::new);
+			GeneratorProperties properties = Classes.convertFromStringArray(args, GeneratorProperties.class);
 			generate(properties);
 		} catch (Exception e) {
 			LOGGER.error("Error generating Open API", e);
