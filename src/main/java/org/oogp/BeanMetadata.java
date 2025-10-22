@@ -20,14 +20,32 @@ public record BeanMetadata(
 		Set<String> aliases,
 		String scope) {
 
+	/**
+	 * Compact constructor to ensure non-null aliases set.
+	 */
 	public BeanMetadata {
 		aliases = aliases != null ? aliases : Set.of();
 	}
 
+	/**
+	 * Factory method to create a BeanMetadata instance without aliases and scope.
+	 *
+	 * @param beanName the bean name
+	 * @param beanInstance the bean instance
+	 * @param beanType the bean type
+	 * @return a new BeanMetadata instance
+	 */
 	public static BeanMetadata of(final String beanName, final Object beanInstance, final Class<?> beanType) {
 		return new BeanMetadata(beanName, beanInstance, beanType, null, null);
 	}
 
+	/**
+	 * Factory method to create a BeanMetadata instance without aliases and scope.
+	 *
+	 * @param beanName the bean name
+	 * @param beanInstance the bean instance
+	 * @return a new BeanMetadata instance
+	 */
 	public static BeanMetadata of(final String beanName, final Object beanInstance) {
 		return of(beanName, beanInstance, beanInstance.getClass());
 	}

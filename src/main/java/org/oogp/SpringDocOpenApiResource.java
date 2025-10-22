@@ -16,10 +16,25 @@ import org.springdoc.webmvc.api.OpenApiResource;
 
 import io.swagger.v3.oas.models.OpenAPI;
 
+/**
+ * Custom SpringDoc OpenApiResource.
+ *
+ * @author Radu Sebastian LAZIN
+ */
 public class SpringDocOpenApiResource extends OpenApiResource {
 
-	private final SpringDocConfigProperties springDocConfigProperties;
-
+	/**
+	 * Constructor.
+	 *
+	 * @param groupName the group name
+	 * @param propertyResolverUtils the property resolver utils
+	 * @param openAPIService the OpenAPI service
+	 * @param requestBuilder the request builder
+	 * @param responseBuilder the response builder
+	 * @param operationService the operation service
+	 * @param springDocCustomizers the SpringDoc customizers
+	 * @param springDocProviders the SpringDoc providers
+	 */
 	protected SpringDocOpenApiResource(
 			final String groupName,
 			final PropertyResolverUtils propertyResolverUtils,
@@ -37,7 +52,6 @@ public class SpringDocOpenApiResource extends OpenApiResource {
 				propertyResolverUtils.getSpringDocConfigProperties(),
 				springDocProviders,
 				springDocCustomizers);
-		this.springDocConfigProperties = propertyResolverUtils.getSpringDocConfigProperties();
 	}
 
 	@Override
@@ -50,6 +64,11 @@ public class SpringDocOpenApiResource extends OpenApiResource {
 		return super.getOpenApi(serverBaseUrl, locale);
 	}
 
+	/**
+	 * Returns the SpringDoc configuration properties.
+	 *
+	 * @return the springDocConfigProperties
+	 */
 	public SpringDocConfigProperties getSpringDocConfigProperties() {
 		return springDocConfigProperties;
 	}

@@ -27,10 +27,61 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.core.metrics.ApplicationStartup;
 import org.springframework.util.StringValueResolver;
 
+/**
+ * A custom bean factory implementation that acts as a wrapper around an existing Spring ApplicationContext. This class
+ * implements both AutowireCapableBeanFactory and ConfigurableBeanFactory interfaces to provide a bridge between an
+ * ApplicationContext and components that require these specific factory interfaces.
+ *
+ * <p>
+ * The factory delegates most bean retrieval operations to the underlying ApplicationContext, while throwing
+ * UnsupportedOperationException for advanced factory operations like bean creation, autowiring, and configuration
+ * management that are not supported by this wrapper implementation.
+ * </p>
+ *
+ * <p>
+ * This implementation is primarily designed for scenarios where you need to expose an ApplicationContext as a
+ * BeanFactory interface without full factory capabilities, such as in plugin architectures or integration scenarios
+ * where only basic bean lookup functionality is required.
+ * </p>
+ *
+ * <b>Supported Operations:</b>
+ * <ul>
+ * <li>Bean retrieval by name and/or type</li>
+ * <li>Bean existence checks</li>
+ * <li>Bean scope queries (singleton/prototype)</li>
+ * <li>Type matching operations</li>
+ * <li>Bean type resolution</li>
+ * <li>Alias resolution</li>
+ * <li>Basic embedded value resolution (pass-through)</li>
+ * <li>Basic bean expression resolution (pass-through)</li>
+ * </ul>
+ *
+ * <b>Unsupported Operations:</b>
+ * <ul>
+ * <li>Bean creation and instantiation</li>
+ * <li>Dependency injection and autowiring</li>
+ * <li>Bean lifecycle management</li>
+ * <li>Singleton registration and management</li>
+ * <li>Bean post-processing</li>
+ * <li>Scope management</li>
+ * <li>Factory configuration</li>
+ * </ul>
+ *
+ * @see org.springframework.beans.factory.config.AutowireCapableBeanFactory
+ * @see org.springframework.beans.factory.config.ConfigurableBeanFactory
+ * @see org.springframework.context.ApplicationContext
+ *
+ * @author Radu Sebastian LAZIN
+ */
 public class CustomBeanFactory implements AutowireCapableBeanFactory, ConfigurableBeanFactory {
 
 	private final ApplicationContext context;
 
+	/**
+	 * Constructs a new CustomBeanFactory that wraps the given ApplicationContext.
+	 *
+	 * @param context the ApplicationContext to wrap
+	 */
 	public CustomBeanFactory(final ApplicationContext context) {
 		this.context = context;
 	}

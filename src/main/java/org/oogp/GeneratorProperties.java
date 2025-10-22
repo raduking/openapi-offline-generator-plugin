@@ -87,6 +87,8 @@ public class GeneratorProperties {
 	}
 
 	/**
+	 * Returns the classes directory.
+	 *
 	 * @return the classesDir
 	 */
 	public String getClassesDir() {
@@ -94,6 +96,8 @@ public class GeneratorProperties {
 	}
 
 	/**
+	 * Sets the classes directory.
+	 *
 	 * @param classesDir the classesDir to set
 	 */
 	public void setClassesDir(final String classesDir) {
@@ -101,6 +105,8 @@ public class GeneratorProperties {
 	}
 
 	/**
+	 * Returns the output file.
+	 *
 	 * @return the outputFile
 	 */
 	public String getOutputFile() {
@@ -108,6 +114,8 @@ public class GeneratorProperties {
 	}
 
 	/**
+	 * Sets the output file.
+	 *
 	 * @param outputFile the outputFile to set
 	 */
 	public void setOutputFile(final String outputFile) {
@@ -115,6 +123,8 @@ public class GeneratorProperties {
 	}
 
 	/**
+	 * Returns the packages to scan.
+	 *
 	 * @return the packagesToScan
 	 */
 	public String getPackagesToScan() {
@@ -122,6 +132,8 @@ public class GeneratorProperties {
 	}
 
 	/**
+	 * Sets the packages to scan.
+	 *
 	 * @param packagesToScan the packagesToScan to set
 	 */
 	public void setPackagesToScan(final String packagesToScan) {
@@ -129,6 +141,8 @@ public class GeneratorProperties {
 	}
 
 	/**
+	 * Returns the project type.
+	 *
 	 * @return the projectType
 	 */
 	public String getProjectType() {
@@ -136,6 +150,8 @@ public class GeneratorProperties {
 	}
 
 	/**
+	 * Sets the project type.
+	 *
 	 * @param projectType the projectType to set
 	 */
 	public void setProjectType(final String projectType) {
@@ -143,6 +159,8 @@ public class GeneratorProperties {
 	}
 
 	/**
+	 * Returns the OAuth2 configurations.
+	 *
 	 * @return the oauth2
 	 */
 	public OAuth2 getOauth2() {
@@ -150,6 +168,8 @@ public class GeneratorProperties {
 	}
 
 	/**
+	 * Sets the OAuth2 configurations.
+	 *
 	 * @param oauth2 the oauth2 to set
 	 */
 	public void setOauth2(final OAuth2 oauth2) {
@@ -166,6 +186,8 @@ public class GeneratorProperties {
 	}
 
 	/**
+	 * Returns the extensions.
+	 *
 	 * @return the extensions
 	 */
 	public Map<String, String> getExtensions() {
@@ -173,6 +195,8 @@ public class GeneratorProperties {
 	}
 
 	/**
+	 * Sets the extensions.
+	 *
 	 * @param extensions the extensions to set
 	 */
 	public void setExtensions(final Map<String, String> extensions) {
@@ -252,5 +276,4 @@ public class GeneratorProperties {
 			this.authorizationUrl = authorizationUrl;
 		}
 	}
-
 }

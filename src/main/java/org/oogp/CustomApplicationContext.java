@@ -25,6 +25,41 @@ import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 
+/**
+ * A custom implementation of Spring's ApplicationContext interface that provides basic bean management and dependency
+ * injection capabilities.
+ *
+ * <p>
+ * This implementation maintains beans in memory using two internal maps: one indexed by class type and another by bean
+ * name. It supports basic bean operations such as registration, retrieval by name or type, and type-based queries.
+ * </p>
+ *
+ * <p>
+ * Key features:
+ * </p>
+ * <ul>
+ * <li>Bean registration by instance, name, or metadata</li>
+ * <li>Bean retrieval by name or type with type safety</li>
+ * <li>Support for annotation-based bean queries</li>
+ * <li>Integration with a custom bean factory for dependency injection</li>
+ * <li>Partial implementation of Spring's ApplicationContext interface</li>
+ * </ul>
+ *
+ * <p>
+ * Note: Many ApplicationContext methods are not implemented and will throw UnsupportedOperationException. This
+ * implementation is designed for specific use cases where a lightweight, custom bean container is needed.
+ * </p>
+ *
+ * <p>
+ * The context automatically registers itself and its associated bean factory as beans during construction.
+ * </p>
+ *
+ * @see ApplicationContext
+ * @see CustomBeanFactory
+ * @see BeanMetadata
+ *
+ * @author Radu Sebastian LAZIN
+ */
 public class CustomApplicationContext implements ApplicationContext {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomApplicationContext.class);
@@ -38,6 +73,11 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	private CustomBeanFactory customBeanFactory;
 
+	/**
+	 * Constructs a new CustomApplicationContext with the specified class loader.
+	 *
+	 * @param classLoader the class loader to use for loading classes and resources
+	 */
 	public CustomApplicationContext(final ClassLoader classLoader) {
 		this.classLoader = classLoader;
 		this.customBeanFactory = new CustomBeanFactory(this);
@@ -45,21 +85,42 @@ public class CustomApplicationContext implements ApplicationContext {
 		addBean(customBeanFactory);
 	}
 
+	/**
+	 * Registers a bean with the context using the provided BeanMetadata.
+	 *
+	 * @param beanMetadata the metadata of the bean to register
+	 */
 	public void addBean(final BeanMetadata beanMetadata) {
 		nameMap.put(beanMetadata.beanName(), beanMetadata);
 		classMap.computeIfAbsent(beanMetadata.beanType(), k -> new ArrayList<>()).add(beanMetadata);
 	}
 
+	/**
+	 * Registers a bean with the context using its instance. The bean name is derived from the class's simple name.
+	 *
+	 * @param beanInstance the instance of the bean to register
+	 */
 	public void addBean(final Object beanInstance) {
 		Class<?> beanType = beanInstance.getClass();
 		addBean(beanType.getSimpleName(), beanInstance);
 	}
 
+	/**
+	 * Registers a bean with the context using the provided name and instance.
+	 *
+	 * @param beanName the name of the bean to register
+	 * @param beanInstance the instance of the bean to register
+	 */
 	public void addBean(final String beanName, final Object beanInstance) {
 		BeanMetadata beanMetadata = BeanMetadata.of(beanName, beanInstance);
 		addBean(beanMetadata);
 	}
 
+	/**
+	 * Returns the custom bean factory associated with this application context.
+	 *
+	 * @return the custom bean factory
+	 */
 	public CustomBeanFactory getCustomBeanFactory() {
 		return customBeanFactory;
 	}
