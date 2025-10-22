@@ -89,7 +89,8 @@ public class OpenApiSpecJakartaGenerator {
 			System.exit(1);
 		}
 		try {
-			generate(args[0], args[1]);
+			GeneratorProperties properties = Classes.convertFromStringArray(args, GeneratorProperties::new);
+			generate(properties);
 		} catch (Exception e) {
 			LOGGER.error("Error generating Open API", e);
 		}
@@ -100,12 +101,11 @@ public class OpenApiSpecJakartaGenerator {
 	 * <p>
 	 * The generator supports both YAML and JSON output formats, depending on the file extension provided.
 	 *
-	 * @param packagesToScan comma-separated list of base packages
-	 * @param outputFile output YAML or JSON file path
+	 * @param properties the generator properties
 	 * @throws IOException when an I/O error occurs
 	 */
-	public static void generate(final String packagesToScan, final String outputFile) throws IOException {
-		Set<String> packages = Arrays.stream(packagesToScan.split(","))
+	public static void generate(final GeneratorProperties properties) throws IOException {
+		Set<String> packages = Arrays.stream(properties.getPackagesToScan().split(","))
 				.map(String::trim)
 				.filter(p -> !p.isEmpty())
 				.collect(Collectors.toSet());
@@ -128,6 +128,7 @@ public class OpenApiSpecJakartaGenerator {
 		Reader reader = new Reader(openAPI);
 		openAPI = reader.read(controllers);
 
+		String outputFile = properties.getOutputFile();
 		File out = new File(outputFile);
 		out.getParentFile().mkdirs();
 

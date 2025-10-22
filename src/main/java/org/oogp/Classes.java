@@ -1,12 +1,19 @@
 package org.oogp;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import org.apiphany.lang.Strings;
+import org.morphix.convert.MapConversions;
+import org.morphix.lang.function.InstanceFunction;
+import org.morphix.reflection.Fields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +68,15 @@ public class Classes {
 				}
 			}
 		}
+	}
+
+	public static <T> T convertFromStringArray(final String[] args, final InstanceFunction<T> instanceFunction) {
+		List<Field> fields = Fields.getAllDeclared(GeneratorProperties.class);
+		Map<String, String> fieldValueMap = HashMap.newHashMap(args.length);
+		for (int i = 0; i < args.length; ++i) {
+			fieldValueMap.put(fields.get(i).getName(), args[i]);
+		}
+		return MapConversions.convertFromMap(fieldValueMap, instanceFunction);
 	}
 
 	public static <T> T unsupportedOperation() {

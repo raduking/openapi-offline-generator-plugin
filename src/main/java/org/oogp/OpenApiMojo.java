@@ -29,34 +29,16 @@ import org.apache.maven.project.MavenProject;
 public class OpenApiMojo extends AbstractMojo {
 
 	/**
-	 * The compiled classes directory (where Spring controllers are located).
-	 */
-	@Parameter(defaultValue = "${project.build.outputDirectory}", readonly = true)
-	private String classesDir;
-
-	/**
-	 * The output file for the generated OpenAPI definition.
-	 */
-	@Parameter(defaultValue = "${project.build.directory}/generated-openapi.yaml", required = true)
-	private String outputFile;
-
-	/**
-	 * The base package(s) to scan for REST controllers. Multiple packages can be comma-separated.
-	 */
-	@Parameter(required = true)
-	private String packagesToScan;
-
-	/**
-	 * The project type ("spring"/"jakarta"), default being "spring".
-	 */
-	@Parameter(defaultValue = "spring")
-	private String projectType;
-
-	/**
 	 * The current maven project.
 	 */
 	@Parameter(defaultValue = "${project}", readonly = true, required = true)
 	private MavenProject project;
+
+	/**
+	 * The properties.
+	 */
+	@Parameter
+	private GeneratorProperties properties;
 
 	/**
 	 * Default constructor.
@@ -70,24 +52,29 @@ public class OpenApiMojo extends AbstractMojo {
 	 */
 	@Override
 	public void execute() throws MojoExecutionException {
+		if (null == properties) {
+			properties = new GeneratorProperties();
+		}
 		try (URLClassLoader projectClassLoader = buildProjectClassLoader()) {
-			getLog().info("Generating OpenAPI spec...");
-			getLog().info("   Classes directory: " + classesDir);
-			getLog().info("   Packages to scan: " + packagesToScan);
-			getLog().info("   Output: " + outputFile);
+			properties.applyDefaults(project);
 
+			getLog().info("Generating OpenAPI spec...");
+			getLog().info("   Classes directory: " + properties.getClassesDir());
+			getLog().info("   Packages to scan: " + properties.getPackagesToScan());
+			getLog().info("   Output: " + properties.getOutputFile());
+
+			Path outputFilePath = Path.of(properties.getOutputFile());
 			// ensure directories exist
-			Files.createDirectories(Path.of(outputFile).getParent());
+			Files.createDirectories(outputFilePath.getParent());
 
 			System.setProperty("project.build.outputDirectory", project.getBuild().getOutputDirectory());
 			Thread.currentThread().setContextClassLoader(projectClassLoader);
 
-			switch (ProjectType.fromString(projectType)) {
-				case SPRING -> OpenApiSpecSpringDocGenerator.generate(packagesToScan, outputFile);
-				case JAKARTA -> OpenApiSpecJakartaGenerator.generate(packagesToScan, outputFile);
-				default -> throw new UnsupportedOperationException("Unknown project type: " + projectType);
+			switch (ProjectType.fromString(properties.getProjectType())) {
+				case JAKARTA -> OpenApiSpecJakartaGenerator.generate(properties);
+				case SPRING -> OpenApiSpecSpringDocGenerator.generate(properties);
+				default -> throw new UnsupportedOperationException("Unknown project type: " + properties.getProjectType());
 			}
-
 		} catch (Exception e) {
 			throw new MojoExecutionException("Failed to generate OpenAPI spec", e);
 		}

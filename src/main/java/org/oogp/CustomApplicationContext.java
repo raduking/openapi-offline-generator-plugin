@@ -41,6 +41,8 @@ public class CustomApplicationContext implements ApplicationContext {
 	public CustomApplicationContext(final ClassLoader classLoader) {
 		this.classLoader = classLoader;
 		this.customBeanFactory = new CustomBeanFactory(this);
+		addBean(this);
+		addBean(customBeanFactory);
 	}
 
 	public void addBean(final BeanMetadata beanMetadata) {

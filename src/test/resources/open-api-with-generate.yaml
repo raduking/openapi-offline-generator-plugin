@@ -1,0 +1,93 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: /
+security:
+- OAuth2: []
+tags:
+- name: Data
+  description: the data
+paths:
+  /api/test/data/elements:
+    post:
+      tags:
+      - Data
+      operationId: getElements
+      parameters:
+      - name: count
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /api/test/info/users:
+    get:
+      tags:
+      - info-controller
+      operationId: getUsers
+      parameters:
+      - name: count
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+  /api/test/info/user/{userId}:
+    get:
+      tags:
+      - info-controller
+      operationId: getUserCacheInfo
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserCacheInfo"
+components:
+  schemas:
+    UserCacheInfo:
+      type: object
+      properties:
+        userId:
+          type: string
+        geoHash:
+          type: string
+        info:
+          type: array
+          items:
+            type: string
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://automatically/replaced/on/runtime/by/unknown
+          scopes: {}
+x-internal-hostname: http://gst-partner-service:8080

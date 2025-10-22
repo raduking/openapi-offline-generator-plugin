@@ -3,18 +3,22 @@ package org.oogp;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apiphany.json.JsonBuilder;
+import org.apiphany.lang.collections.Maps;
 import org.morphix.reflection.InstanceCreator;
 import org.morphix.reflection.Methods;
 import org.slf4j.Logger;
@@ -25,6 +29,7 @@ import org.springdoc.core.converters.PolymorphicModelConverter;
 import org.springdoc.core.converters.PropertyCustomizingConverter;
 import org.springdoc.core.converters.ResponseSupportConverter;
 import org.springdoc.core.converters.SchemaPropertyDeprecatingConverter;
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.customizers.SpringDocCustomizers;
 import org.springdoc.core.discoverer.SpringDocParameterNameDiscoverer;
 import org.springdoc.core.extractor.MethodParameterPojoExtractor;
@@ -60,6 +65,8 @@ import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.integration.GenericOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.Scopes;
@@ -106,6 +113,11 @@ public class OpenApiSpecSpringDocGenerator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(OpenApiSpecSpringDocGenerator.class);
 
 	/**
+	 * Annotations that define if a class should take part in the Open API generation.
+	 */
+	private static final Set<Class<? extends Annotation>> REQUEST_HANDLER_ANNOTATIONS = Set.of(RestController.class, RequestMapping.class);
+
+	/**
 	 * Hide constructor.
 	 */
 	private OpenApiSpecSpringDocGenerator() {
@@ -133,7 +145,8 @@ public class OpenApiSpecSpringDocGenerator {
 			System.exit(1);
 		}
 		try {
-			generate(args[0], args[1]);
+			GeneratorProperties properties = Classes.convertFromStringArray(args, GeneratorProperties::new);
+			generate(properties);
 		} catch (Exception e) {
 			LOGGER.error("Error generating Open API", e);
 		}
@@ -144,12 +157,14 @@ public class OpenApiSpecSpringDocGenerator {
 	 * <p>
 	 * The generator supports both YAML and JSON output formats, depending on the file extension provided.
 	 *
-	 * @param packagesToScan comma-separated list of base packages
-	 * @param outputFile output YAML or JSON file path
+	 * @param properties the generator properties
 	 * @throws IOException when an I/O error occurs
 	 */
-	public static void generate(final String packagesToScan, final String outputFile) throws IOException {
-		Set<String> packages = Arrays.stream(packagesToScan.split(","))
+	public static void generate(final GeneratorProperties properties) throws IOException {
+		System.setProperty(JsonBuilder.Property.INDENT_OUTPUT, "true");
+		LOGGER.info("Generator properties: {}", properties);
+
+		Set<String> packages = Arrays.stream(properties.getPackagesToScan().split(","))
 				.map(String::trim)
 				.filter(p -> !p.isEmpty())
 				.collect(Collectors.toSet());
@@ -157,36 +172,28 @@ public class OpenApiSpecSpringDocGenerator {
 		Path projectClassesDir = Classes.detectDirectory();
 		LOGGER.info("Using classes directory: {}", projectClassesDir.toAbsolutePath());
 
-		Set<Class<?>> controllers = new HashSet<>();
-		for (String pkg : packages) {
-			LOGGER.info("Scanning package: {}", pkg);
-			Set<Class<?>> classes = Classes.findInPackage(pkg, projectClassesDir);
-			for (Class<?> cls : classes) {
-				if (null != cls.getAnnotation(RestController.class) || null != cls.getAnnotation(RequestMapping.class)) {
-					controllers.add(cls);
-					LOGGER.info("Found controller: {}", cls);
-				}
-			}
-		}
+		Set<Class<?>> requestHandlerClasses = findRequestHandlerClasses(packages, projectClassesDir, REQUEST_HANDLER_ANNOTATIONS);
 
-		ClassLoader projectLoader = Thread.currentThread().getContextClassLoader();
-		CustomApplicationContext context = new CustomApplicationContext(projectLoader);
-		for (Class<?> controllerClass : controllers) {
-			Object controller = InstanceCreator.getInstance().newInstance(controllerClass);
-			String beanName = controllerClass.getSimpleName();
+		ClassLoader projectClassLoader = Thread.currentThread().getContextClassLoader();
+		CustomApplicationContext context = new CustomApplicationContext(projectClassLoader);
+		for (Class<?> requestHandlerClass : requestHandlerClasses) {
+			Object controller = InstanceCreator.getInstance().newInstance(requestHandlerClass);
+			String beanName = requestHandlerClass.getSimpleName();
 			context.addBean(controller);
 
 			RequestMappingHandlerMapping handlerMapping = createHandlerMapping(context, controller);
 			context.addBean(beanName + "HandlerMapping", handlerMapping);
 		}
-		context.addBean(context);
 
+		String outputFile = properties.getOutputFile();
 		SpringDocOpenApiResource openApiResource = buildSpringDocOpenApiResource(outputFile, context);
 		OpenAPI openAPI = openApiResource.getOpenApi(null, Locale.ENGLISH);
 
-		configureOAuth2(openAPI);
-
-		addExtensions(openAPI);
+		openAPI.setServers(List.of(new Server().url("/")));
+		if (properties.isOAuth2Enabled()) {
+			configureOAuth2(openAPI, properties.getOauth2());
+		}
+		addExtensions(openAPI, properties.getExtensions());
 
 		File out = new File(outputFile);
 		out.getParentFile().mkdirs();
@@ -203,11 +210,62 @@ public class OpenApiSpecSpringDocGenerator {
 		}
 
 		LOGGER.info("Generated OpenAPI spec at {}", out.getAbsolutePath());
+
+		Path outputFilePath = Path.of(outputFile);
+		String generatedContent = Files.readString(outputFilePath);
+		LOGGER.info("Generated:\n{}", generatedContent);
+	}
+
+	private static Set<Class<?>> findRequestHandlerClasses(final Set<String> packages, final Path projectClassesDir,
+			final Set<Class<? extends Annotation>> annotations) {
+		Set<Class<?>> requestHandlers = new HashSet<>();
+		for (String pkg : packages) {
+			LOGGER.info("Scanning package: {}", pkg);
+			Set<Class<?>> classes = Classes.findInPackage(pkg, projectClassesDir);
+			for (Class<?> cls : classes) {
+				boolean isRequestHandler = false;
+				for (Class<? extends Annotation> annotation : annotations) {
+					boolean hasAnnotation = null != cls.getAnnotation(annotation);
+					if (hasAnnotation) {
+						LOGGER.info("Found {} on: {}", annotation, cls);
+					}
+					isRequestHandler |= hasAnnotation;
+				}
+				if (isRequestHandler) {
+					requestHandlers.add(cls);
+				}
+			}
+		}
+		return requestHandlers;
+	}
+
+	private static RequestMappingHandlerMapping createHandlerMapping(final ApplicationContext context, final Object controller) {
+		RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping();
+		handlerMapping.setApplicationContext(context);
+		handlerMapping.afterPropertiesSet();
+		registerControllerMethods(handlerMapping, controller);
+		return handlerMapping;
+	}
+
+	private static void registerControllerMethods(final RequestMappingHandlerMapping handlerMapping, final Object controller) {
+		for (Method method : Methods.getAllDeclaredInHierarchy(controller.getClass())) {
+			RequestMapping methodMapping = method.getAnnotation(RequestMapping.class);
+			if (methodMapping != null) {
+				RequestMappingInfo mappingInfo = RequestMappingInfo
+						.paths(methodMapping.value())
+						.methods(methodMapping.method())
+						.params(methodMapping.params())
+						.headers(methodMapping.headers())
+						.consumes(methodMapping.consumes())
+						.produces(methodMapping.produces())
+						.build();
+				handlerMapping.registerMapping(mappingInfo, controller, method);
+			}
+		}
 	}
 
 	private static SpringDocOpenApiResource buildSpringDocOpenApiResource(final String outputFile, final CustomApplicationContext context) {
 		SpringDocConfigProperties springDocConfigProperties = new SpringDocConfigProperties();
-		System.setProperty(JsonBuilder.Property.INDENT_OUTPUT, "true");
 		String properties = JsonBuilder.toJson(springDocConfigProperties);
 		LOGGER.info("Spring Doc Config properties: {}", properties);
 
@@ -239,7 +297,12 @@ public class OpenApiSpecSpringDocGenerator {
 		springWebMvcProvider.setApplicationContext(context);
 
 		SpringDocCustomizers springDocCustomizers = new SpringDocCustomizers(
-				Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+				Optional.of(Set.of(normalizeOperationIds())),
+				Optional.empty(),
+				Optional.empty(),
+				Optional.empty(),
+				Optional.empty(),
+				Optional.empty());
 
 		GenericParameterService genericParameterService = new GenericParameterService(
 				propertyResolverUtils,
@@ -289,48 +352,6 @@ public class OpenApiSpecSpringDocGenerator {
 				springDocProviders);
 	}
 
-	private static RequestMappingHandlerMapping createHandlerMapping(final ApplicationContext context, final Object controller) {
-		RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping();
-		handlerMapping.setApplicationContext(context);
-		handlerMapping.afterPropertiesSet();
-		registerControllerMethods(handlerMapping, controller);
-		return handlerMapping;
-	}
-
-	private static void registerControllerMethods(final RequestMappingHandlerMapping handlerMapping, final Object controller) {
-		for (Method method : Methods.getAllDeclaredInHierarchy(controller.getClass())) {
-			if (shouldSkipMethod(method)) {
-				LOGGER.debug("Skipping generated, synthetic, or default interface method: {}", method);
-				continue;
-			}
-			RequestMapping methodMapping = method.getAnnotation(RequestMapping.class);
-			if (methodMapping != null) {
-				RequestMappingInfo mappingInfo = RequestMappingInfo
-						.paths(methodMapping.value())
-						.methods(methodMapping.method())
-						.params(methodMapping.params())
-						.headers(methodMapping.headers())
-						.consumes(methodMapping.consumes())
-						.produces(methodMapping.produces())
-						.build();
-
-				handlerMapping.registerMapping(mappingInfo, controller, method);
-			}
-		}
-	}
-
-	/**
-	 * Determines whether a given method should be skipped from OpenAPI registration. Skips generated interface wrappers
-	 * (like "_fetchData"), synthetic/bridge methods, and default interface implementations.
-	 */
-	private static boolean shouldSkipMethod(final Method method) {
-		// OpenAPI-generated default wrappers often start with "_" or are declared default
-		if (method.getName().startsWith("_")) {
-			return true;
-		}
-		return method.isDefault() || method.isSynthetic() || method.isBridge();
-	}
-
 	private static void registerModelConverters(final SpringDocConfigProperties springDocConfigProperties,
 			final ObjectMapperProvider objectMapperProvider) {
 		ModelConverters modelConverters = ModelConverters.getInstance(springDocConfigProperties.isOpenapi31());
@@ -343,14 +364,23 @@ public class OpenApiSpecSpringDocGenerator {
 		modelConverters.addConverter(new PropertyCustomizingConverter(Optional.empty()));
 	}
 
-	private static void configureOAuth2(final OpenAPI openAPI) {
-		// TODO: parameterize these
-		openAPI.setServers(List.of(new Server().url("/")));
+	private static OpenApiCustomizer normalizeOperationIds() {
+		return openApi -> openApi.getPaths().forEach((path, item) -> {
+			for (PathItem.HttpMethod method : item.readOperationsMap().keySet()) {
+				Operation operation = item.readOperationsMap().get(method);
+				String id = operation.getOperationId();
+				if (id != null && id.startsWith("_")) {
+					operation.setOperationId(id.substring(1));
+				}
+			}
+		});
+	}
+
+	private static void configureOAuth2(final OpenAPI openAPI, final GeneratorProperties.OAuth2 oauth2) {
 		OAuthFlows flows = new OAuthFlows()
 				.implicit(new OAuthFlow()
-						.authorizationUrl("http://automatically/replaced/on/runtime")
-						.scopes(new Scopes()) // empty
-				);
+						.authorizationUrl(oauth2.getAuthorizationUrl())
+						.scopes(new Scopes()));
 		SecurityScheme oAuth2Scheme = new SecurityScheme()
 				.type(SecurityScheme.Type.OAUTH2)
 				.flows(flows);
@@ -358,11 +388,7 @@ public class OpenApiSpecSpringDocGenerator {
 		openAPI.addSecurityItem(new SecurityRequirement().addList("OAuth2"));
 	}
 
-	private static void addExtensions(final OpenAPI openAPI) {
-		// TODO: parameterize these
-		openAPI.addExtension("x-version", null);
-		openAPI.addExtension("x-groupId", null);
-		openAPI.addExtension("x-artifactId", null);
-		openAPI.addExtension("x-internal-hostname", "http://gst-partner-service:8080");
+	private static void addExtensions(final OpenAPI openAPI, final Map<String, String> extensions) {
+		Maps.safe(extensions).forEach(openAPI::addExtension);
 	}
 }
