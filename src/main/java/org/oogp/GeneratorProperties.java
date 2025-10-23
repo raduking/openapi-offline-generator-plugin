@@ -72,10 +72,10 @@ public class GeneratorProperties {
 		if (Strings.isEmpty(projectType)) {
 			projectType = "spring";
 		}
-		if (oauth2 == null) {
+		if (null == oauth2) {
 			oauth2 = new OAuth2();
-			oauth2.applyDefaults(project);
 		}
+		oauth2.applyDefaults(project);
 	}
 
 	/**
