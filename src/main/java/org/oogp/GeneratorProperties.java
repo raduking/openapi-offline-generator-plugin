@@ -39,7 +39,7 @@ public class GeneratorProperties {
 	private String projectType;
 
 	/**
-	 * Flag to enable OAuth2 security scheme.
+	 * OAuth2 properties.
 	 */
 	@Parameter
 	private OAuth2 oauth2;
