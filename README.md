@@ -2,7 +2,7 @@
 A Maven plugin for generating OpenAPI documentation offline.
 
 ## Features
-- Pure offline generation (no network calls)
+- Pure offline generation (no network calls, no Spring context loading for Spring applications)
 - Fast, reproducible, CI friendly
 - Supports YAML, JSON bundle outputs
 - Deterministic builds (stable ordering / hashing)
