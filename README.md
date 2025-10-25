@@ -19,7 +19,7 @@ Add the plugin to your project POM:
         <plugin>
             <groupId>com.example</groupId>
             <artifactId>openapi-offline-generator-plugin</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
             <executions>
                 <execution>
                     <id>generate-openapi-offline</id>
