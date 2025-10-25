@@ -58,6 +58,8 @@ public class OpenApiMojo extends AbstractMojo {
 		try (URLClassLoader projectClassLoader = buildProjectClassLoader()) {
 			properties.applyDefaults(project);
 
+			JavaEnvironment.info(getLog()::info);
+
 			getLog().info("Generating OpenAPI spec...");
 			getLog().info("   Classes directory: " + properties.getClassesDir());
 			getLog().info("   Packages to scan: " + properties.getPackagesToScan());
@@ -76,6 +78,7 @@ public class OpenApiMojo extends AbstractMojo {
 				default -> throw new UnsupportedOperationException("Unknown project type: " + properties.getProjectType());
 			}
 		} catch (Exception e) {
+			getLog().info("Error generating OpenAPI spec: " + e.getMessage());
 			throw new MojoExecutionException("Failed to generate OpenAPI spec", e);
 		}
 	}

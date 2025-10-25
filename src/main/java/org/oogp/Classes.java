@@ -86,7 +86,7 @@ public class Classes {
 			return Collections.emptySet();
 		}
 		ClassLoader projectClassLoader = Thread.currentThread().getContextClassLoader();
-		return findClassesInDirectory(directory, basePackage, projectClassLoader);
+		return findInDirectory(directory, basePackage, projectClassLoader);
 	}
 
 	/**
@@ -103,12 +103,12 @@ public class Classes {
 	 * @throws NullPointerException if the directory is null or if directory.listFiles() returns null
 	 * @throws ReflectionException if any class fails to load (depends on getOne implementation)
 	 */
-	public static Set<Class<?>> findClassesInDirectory(final File directory, final String packageName, final ClassLoader classLoader) {
+	public static Set<Class<?>> findInDirectory(final File directory, final String packageName, final ClassLoader classLoader) {
 		File[] files = Objects.requireNonNull(directory.listFiles());
 		Set<Class<?>> classes = new HashSet<>();
 		for (File file : files) {
 			if (file.isDirectory()) {
-				classes.addAll(findClassesInDirectory(file, packageName + "." + file.getName(), classLoader));
+				classes.addAll(findInDirectory(file, packageName + "." + file.getName(), classLoader));
 			} else if (file.getName().endsWith(CLASS_FILE_EXTENSION)) {
 				String className = packageName + '.' + file.getName().substring(0, file.getName().length() - CLASS_FILE_EXTENSION.length());
 				Class<?> cls = getOne(className, classLoader);
