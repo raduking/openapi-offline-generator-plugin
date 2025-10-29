@@ -1,8 +1,21 @@
 # openapi-offline-generator-plugin
 A Maven plugin for generating OpenAPI documentation offline.
 
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.raduking/openapi-offline-generator-plugin)](https://central.sonatype.com/artifact/io.github.raduking/openapi-offline-generator-plugin)
+[![GitHub Release](https://img.shields.io/github/v/release/raduking/openapi-offline-generator-plugin)](https://github.com/raduking/openapi-offline-generator-plugin/releases)
+[![License](https://img.shields.io/github/license/raduking/openapi-offline-generator-plugin)](https://opensource.org/license/apache-2-0)
+[![Java](https://img.shields.io/badge/Java-21+-blue)](https://www.oracle.com/java/technologies/downloads/#java21)
+[![PRs](https://img.shields.io/github/issues-pr/raduking/openapi-offline-generator-plugin)](https://github.com/raduking/openapi-offline-generator-plugin/pulls)
+
+#### Status
+
+[![branch: master](https://img.shields.io/badge/branch-master-blue)](https://github.com/raduking/openapi-offline-generator-plugin/tree/master)
+![Build (master)](https://github.com/raduking/openapi-offline-generator-plugin/actions/workflows/build.yml/badge.svg?branch=master)
+[![branch: develop](https://img.shields.io/badge/branch-develop-purple)](https://github.com/raduking/openapi-offline-generator-plugin/tree/develop)
+![Build (develop)](https://github.com/raduking/openapi-offline-generator-plugin/actions/workflows/build.yml/badge.svg?branch=develop)
+
 ## Features
-- Pure offline generation (no network calls)
+- Pure offline generation (no network calls, no Spring context loading for Spring applications)
 - Fast, reproducible, CI friendly
 - Supports YAML, JSON bundle outputs
 - Deterministic builds (stable ordering / hashing)
@@ -19,7 +32,7 @@ Add the plugin to your project POM:
         <plugin>
             <groupId>com.example</groupId>
             <artifactId>openapi-offline-generator-plugin</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
             <executions>
                 <execution>
                     <id>generate-openapi-offline</id>

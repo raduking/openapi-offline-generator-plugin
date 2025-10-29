@@ -17,7 +17,7 @@
 
 	<groupId>io.github.raduking</groupId>
 	<artifactId>openapi-offline-generator-plugin</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -133,7 +133,7 @@
 		<dependency>
 			<groupId>io.github.raduking</groupId>
 			<artifactId>apiphany</artifactId>
-			<version>1.0.13</version>
+			<version>1.0.14</version>
 		</dependency>
 
 		<!-- Javadoc -->
