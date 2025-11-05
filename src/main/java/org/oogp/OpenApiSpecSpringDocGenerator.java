@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apiphany.json.JsonBuilder;
+import org.apiphany.lang.collections.Lists;
 import org.apiphany.lang.collections.Maps;
 import org.morphix.reflection.InstanceCreator;
 import org.morphix.reflection.Methods;
@@ -146,6 +147,7 @@ public class OpenApiSpecSpringDocGenerator {
 		}
 		try {
 			GeneratorProperties properties = Classes.convertFromStringArray(args, GeneratorProperties.class);
+			properties.applyDefaults(null);
 			generate(properties);
 		} catch (Exception e) {
 			LOGGER.error("Error generating Open API", e);
@@ -189,7 +191,10 @@ public class OpenApiSpecSpringDocGenerator {
 		SpringDocOpenApiResource openApiResource = buildSpringDocOpenApiResource(outputFile, context);
 		OpenAPI openAPI = openApiResource.getOpenApi(null, Locale.ENGLISH);
 
-		openAPI.setServers(List.of(new Server().url("/")));
+		List<GeneratorProperties.Server> configuredServers = properties.getServers();
+		openAPI.setServers(configuredServers.stream()
+				.map(srv -> new Server().url(srv.getUrl()))
+				.toList());
 		if (properties.isOAuth2Enabled()) {
 			configureOAuth2(openAPI, properties.getOauth2());
 		}
@@ -370,7 +375,9 @@ public class OpenApiSpecSpringDocGenerator {
 				Operation operation = item.readOperationsMap().get(method);
 				String id = operation.getOperationId();
 				if (id != null && id.startsWith("_")) {
-					operation.setOperationId(id.substring(1));
+					String normalizedId = id.substring(1);
+					LOGGER.info("Normalizing operationId '{}' to '{}'", id, normalizedId);
+					operation.setOperationId(normalizedId);
 				}
 			}
 		});
