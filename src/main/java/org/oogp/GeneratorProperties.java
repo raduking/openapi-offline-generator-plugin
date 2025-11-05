@@ -19,21 +19,21 @@ public class GeneratorProperties {
 
 	/**
 	 * Defaults name space class.
-	 * 
+	 *
 	 * @author Radu Sebastian LAZIN
 	 */
 	public static class Default {
-		
+
 		/**
 		 * The default build directory.
 		 */
 		public static final String BUILD_DIRECTORY = "target";
-		
+
 		/**
 		 * The default classes directory.
 		 */
 		public static final String OUTPUT_DIRECTORY = "target/classes";
-		
+
 		/**
 		 * The default generated OpenAPI YAML file.
 		 */

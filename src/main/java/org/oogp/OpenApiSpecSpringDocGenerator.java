@@ -191,7 +191,7 @@ public class OpenApiSpecSpringDocGenerator {
 		SpringDocOpenApiResource openApiResource = buildSpringDocOpenApiResource(outputFile, context);
 		OpenAPI openAPI = openApiResource.getOpenApi(null, Locale.ENGLISH);
 
-		List<GeneratorProperties.Server> configuredServers = properties.getServers();
+		List<GeneratorProperties.Server> configuredServers = Lists.safe(properties.getServers());
 		openAPI.setServers(configuredServers.stream()
 				.map(srv -> new Server().url(srv.getUrl()))
 				.toList());
