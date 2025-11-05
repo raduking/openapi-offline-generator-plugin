@@ -35,7 +35,7 @@ public class SpringDocOpenApiResource extends OpenApiResource {
 	 * @param springDocCustomizers the SpringDoc customizers
 	 * @param springDocProviders the SpringDoc providers
 	 */
-	protected SpringDocOpenApiResource(
+	protected SpringDocOpenApiResource( // NOSONAR we need to pass all these dependencies
 			final String groupName,
 			final PropertyResolverUtils propertyResolverUtils,
 			final OpenAPIService openAPIService,
