@@ -24,6 +24,7 @@ import org.springframework.context.NoSuchMessageException;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
+import org.springframework.lang.Nullable;
 
 /**
  * A custom implementation of Spring's ApplicationContext interface that provides basic bean management and dependency
@@ -92,7 +93,7 @@ public class CustomApplicationContext implements ApplicationContext {
 	 */
 	public void addBean(final BeanMetadata beanMetadata) {
 		nameMap.put(beanMetadata.beanName(), beanMetadata);
-		classMap.computeIfAbsent(beanMetadata.beanType(), k -> new ArrayList<>()).add(beanMetadata);
+		classMap.computeIfAbsent(beanMetadata.beanType(), _ -> new ArrayList<>()).add(beanMetadata);
 	}
 
 	/**
@@ -306,6 +307,7 @@ public class CustomApplicationContext implements ApplicationContext {
 	}
 
 	@Override
+	@Nullable
 	public Class<?> getType(final String name) throws NoSuchBeanDefinitionException {
 		BeanMetadata beanMetadata = nameMap.get(name);
 		if (null == beanMetadata) {
@@ -315,6 +317,7 @@ public class CustomApplicationContext implements ApplicationContext {
 	}
 
 	@Override
+	@Nullable
 	public Class<?> getType(final String name, final boolean allowFactoryBeanInit) throws NoSuchBeanDefinitionException {
 		return Classes.unsupportedOperation();
 	}

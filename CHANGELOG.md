@@ -5,6 +5,10 @@
 `1.0.2`
 
 - Added servers configuration.
+- Upgraded to Java 25.
+- Upgraded `jacoco-maven-plugin` to `0.8.14`.
+- Upgraded `apiphany` to `1.0.16`.
+- Upgraded `maven-plugin-plugin` to `3.15.2`.
 
 ---
 

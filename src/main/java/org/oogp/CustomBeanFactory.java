@@ -25,6 +25,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.metrics.ApplicationStartup;
+import org.springframework.lang.Nullable;
 import org.springframework.util.StringValueResolver;
 
 /**
@@ -147,11 +148,13 @@ public class CustomBeanFactory implements AutowireCapableBeanFactory, Configurab
 	}
 
 	@Override
+	@Nullable
 	public Class<?> getType(final String name) throws NoSuchBeanDefinitionException {
 		return context.getType(name);
 	}
 
 	@Override
+	@Nullable
 	public Class<?> getType(final String name, final boolean allowFactoryBeanInit) throws NoSuchBeanDefinitionException {
 		return context.getType(name);
 	}
@@ -326,7 +329,7 @@ public class CustomBeanFactory implements AutowireCapableBeanFactory, Configurab
 	@Override
 	public BeanExpressionResolver getBeanExpressionResolver() {
 		// TODO: see if we need it
-		return (value, expressionContext) -> value;
+		return (value, _) -> value;
 	}
 
 	@Override

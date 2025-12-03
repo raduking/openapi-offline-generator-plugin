@@ -370,7 +370,7 @@ public class OpenApiSpecSpringDocGenerator {
 	}
 
 	private static OpenApiCustomizer normalizeOperationIds() {
-		return openApi -> openApi.getPaths().forEach((path, item) -> {
+		return openApi -> openApi.getPaths().forEach((_, item) -> {
 			for (PathItem.HttpMethod method : item.readOperationsMap().keySet()) {
 				Operation operation = item.readOperationsMap().get(method);
 				String id = operation.getOperationId();
