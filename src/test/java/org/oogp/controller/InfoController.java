@@ -34,6 +34,16 @@ public class InfoController {
 		return ResponseEntity.ok(result);
 	}
 
+	@GetMapping("/object-object")
+	public ResponseEntity<Object> getObjectAsObject() {
+		return ResponseEntity.ok("{\"id\":\"object-object\"}");
+	}
+
+	@GetMapping(value = "/object-object-json", produces = "application/json")
+	public ResponseEntity<Object> getObjectAsObjectJson() {
+		return ResponseEntity.ok("{\"id\":\"object-object-json\"}");
+	}
+
 	public String getName() {
 		return name;
 	}

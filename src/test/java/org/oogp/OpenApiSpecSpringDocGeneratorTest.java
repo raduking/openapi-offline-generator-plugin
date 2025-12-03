@@ -29,11 +29,11 @@ class OpenApiSpecSpringDocGeneratorTest {
 	private static final String OUTPUT_FILE_NAME_WITH_MAIN = "open-api-with-main.yaml";
 
 	@Test
-	void shouldBuildOpenApiFile() throws IOException {
+	void shouldBuildOpenApiFileWithGenerate() throws IOException {
 		String currentDirectory = Paths.get("").toAbsolutePath().toString();
 		System.setProperty("project.build.outputDirectory", currentDirectory + "/target/test-classes");
 
-		String fileName = currentDirectory + "/src/test/resources/actual/" + OUTPUT_FILE_NAME_WITH_GENERATE;
+		String fileName = currentDirectory + "/src/test/resources/" + OUTPUT_FILE_NAME_WITH_GENERATE;
 		Path path = Paths.get(fileName);
 		Files.deleteIfExists(path);
 
@@ -87,7 +87,7 @@ class OpenApiSpecSpringDocGeneratorTest {
 		String currentDirectory = Paths.get("").toAbsolutePath().toString();
 		System.setProperty("project.build.outputDirectory", currentDirectory + "/target/test-classes");
 
-		String fileName = currentDirectory + "/src/test/resources/actual/" + OUTPUT_FILE_NAME_WITH_MAIN;
+		String fileName = currentDirectory + "/src/test/resources/" + OUTPUT_FILE_NAME_WITH_MAIN;
 		Path path = Paths.get(fileName);
 		Files.deleteIfExists(path);
 
