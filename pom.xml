@@ -51,6 +51,7 @@
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+		<maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
 		<maven.plugin.plugin.version>3.15.2</maven.plugin.plugin.version>
 
 		<!-- Publishing dependencies versions -->
@@ -241,6 +242,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.plugin.version}</version>
 				<configuration>
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.target}</target>

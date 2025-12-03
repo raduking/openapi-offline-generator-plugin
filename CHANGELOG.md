@@ -9,6 +9,7 @@
 - Upgraded `jacoco-maven-plugin` to `0.8.14`.
 - Upgraded `apiphany` to `1.0.16`.
 - Upgraded `maven-plugin-plugin` to `3.15.2`.
+- Upgraded `maven-compiler-plugin` to `3.14.1`.
 
 ---
 
