@@ -48,8 +48,6 @@ public interface DataApi {
 		value = "object-string",
 		produces = { MediaType.APPLICATION_JSON_VALUE })
 	default ResponseEntity<Object> getObjectAsString() {
-		// this will generate schema with type: string because the @Schema implementation is defined as Object.class but
-		// spring-doc infers string because it cannot determine a structured schema
 		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
@@ -72,8 +70,6 @@ public interface DataApi {
 		value = "object-object",
 		produces = { MediaType.APPLICATION_JSON_VALUE })
 	default ResponseEntity<Object> getObjectAsObject() {
-		// this will generate schema with type: string because the @Schema implementation is defined as Object.class but
-		// spring-doc infers string because it cannot determine a structured schema
 		return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 	}
 }
