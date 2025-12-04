@@ -9,7 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -178,7 +177,7 @@ public class OpenApiSpecSpringDocGenerator {
 		Path projectClassesDir = Classes.detectDirectory();
 		LOGGER.info("Using classes directory: {}", projectClassesDir.toAbsolutePath());
 
-		Set<Class<?>> requestHandlerClasses = findRequestHandlerClasses(packages, projectClassesDir, REQUEST_HANDLER_ANNOTATIONS);
+		Set<Class<?>> requestHandlerClasses = Classes.findWithAnyAnnotation(packages, projectClassesDir, REQUEST_HANDLER_ANNOTATIONS);
 		ClassLoader projectClassLoader = Thread.currentThread().getContextClassLoader();
 		CustomApplicationContext context = new CustomApplicationContext(projectClassLoader);
 		for (Class<?> requestHandlerClass : requestHandlerClasses) {
@@ -186,12 +185,11 @@ public class OpenApiSpecSpringDocGenerator {
 			String beanName = requestHandlerClass.getSimpleName();
 			context.addBean(controller);
 
-			RequestMappingHandlerMapping handlerMapping = createHandlerMapping(context, controller);
+			RequestMappingHandlerMapping handlerMapping = createHandlerMapping(controller, context, properties);
 			context.addBean(beanName + "HandlerMapping", handlerMapping);
 		}
 
 		String outputFile = properties.getOutputFile();
-		configureObjectClassSchema(properties.getSchemaForObjectClass().toLowerCase());
 
 		SpringDocOpenApiResource openApiResource = buildSpringDocOpenApiResource(outputFile, context);
 		OpenAPI openAPI = openApiResource.getOpenApi(null, Locale.ENGLISH);
@@ -226,41 +224,20 @@ public class OpenApiSpecSpringDocGenerator {
 		LOGGER.info("Generated:\n{}", generatedContent);
 	}
 
-	private static Set<Class<?>> findRequestHandlerClasses(final Set<String> packages, final Path projectClassesDir,
-			final Set<Class<? extends Annotation>> annotations) {
-		Set<Class<?>> requestHandlers = new HashSet<>();
-		for (String pkg : packages) {
-			LOGGER.info("Scanning package: {}", pkg);
-			Set<Class<?>> classes = Classes.findInPackage(pkg, projectClassesDir);
-			for (Class<?> cls : classes) {
-				boolean isRequestHandler = false;
-				for (Class<? extends Annotation> annotation : annotations) {
-					boolean hasAnnotation = null != cls.getAnnotation(annotation);
-					if (hasAnnotation) {
-						LOGGER.info("Found {} on: {}", annotation, cls);
-					}
-					isRequestHandler |= hasAnnotation;
-				}
-				if (isRequestHandler) {
-					requestHandlers.add(cls);
-				}
-			}
-		}
-		return requestHandlers;
-	}
-
-	private static RequestMappingHandlerMapping createHandlerMapping(final ApplicationContext context, final Object controller) {
+	private static RequestMappingHandlerMapping createHandlerMapping(final Object controller, final ApplicationContext context,
+			GeneratorProperties properties) {
 		RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping();
 		handlerMapping.setApplicationContext(context);
 		handlerMapping.afterPropertiesSet();
-		registerControllerMethods(handlerMapping, controller);
+		registerControllerMethods(handlerMapping, controller, properties.getSchemaForObjectClass());
 		return handlerMapping;
 	}
 
-	private static void registerControllerMethods(final RequestMappingHandlerMapping handlerMapping, final Object controller) {
+	private static void registerControllerMethods(final RequestMappingHandlerMapping handlerMapping, final Object controller,
+			String schemaForObjectClass) {
 		for (Method method : Methods.Complete.getAllDeclaredInHierarchy(controller.getClass(), Classes.mutableSetOf(Object.class))) {
 			RequestMapping methodMapping = method.getAnnotation(RequestMapping.class);
-			SwaggerAnnotations.overrideAnnotations(method, "object");
+			SwaggerAnnotations.overrideAnnotations(method, schemaForObjectClass);
 			if (methodMapping != null) {
 				RequestMappingInfo mappingInfo = RequestMappingInfo
 						.paths(methodMapping.value())
@@ -404,12 +381,4 @@ public class OpenApiSpecSpringDocGenerator {
 	private static void addExtensions(final OpenAPI openAPI, final Map<String, String> extensions) {
 		Maps.safe(extensions).forEach(openAPI::addExtension);
 	}
-
-	private static void configureObjectClassSchema(String schemaForObjectClass) {
-		if ("string".equals(schemaForObjectClass)) {
-			// ignore string configuration since it's the default in springdoc
-			return;
-		}
-	}
-
 }

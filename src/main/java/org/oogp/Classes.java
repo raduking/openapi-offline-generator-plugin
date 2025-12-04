@@ -1,6 +1,7 @@
 package org.oogp;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -119,6 +120,40 @@ public class Classes {
 	}
 
 	/**
+	 * Finds all classes within the specified packages that are annotated with at least one of the given annotations.
+	 * <p>
+	 * This method scans each package for classes, checks each class for the presence of any of the specified annotations, and
+	 * collects those classes into a result set.
+	 *
+	 * @param packages the set of package names to scan for classes
+	 * @param projectClassesDir the directory containing the compiled project classes
+	 * @param annotations the set of annotation classes to look for on the classes
+	 * @return a Set of Class objects that are annotated with at least one of the specified annotations
+	 */
+	static Set<Class<?>> findWithAnyAnnotation(final Set<String> packages, final Path projectClassesDir,
+			final Set<Class<? extends Annotation>> annotations) {
+		Set<Class<?>> classesWithAnnotations = new HashSet<>();
+		for (String pkg : packages) {
+			LOGGER.info("Scanning package: {}", pkg);
+			Set<Class<?>> classes = findInPackage(pkg, projectClassesDir);
+			for (Class<?> cls : classes) {
+				boolean hasAtLeastOneOfTheAnnotations = false;
+				for (Class<? extends Annotation> annotation : annotations) {
+					boolean hasAnnotation = null != cls.getAnnotation(annotation);
+					if (hasAnnotation) {
+						LOGGER.info("Found {} on: {}", annotation, cls);
+					}
+					hasAtLeastOneOfTheAnnotations |= hasAnnotation;
+				}
+				if (hasAtLeastOneOfTheAnnotations) {
+					classesWithAnnotations.add(cls);
+				}
+			}
+		}
+		return classesWithAnnotations;
+	}
+
+	/**
 	 * Converts a string array to an instance of the specified class by mapping array elements to the class fields in
 	 * declaration order.
 	 * <ul>
@@ -153,11 +188,7 @@ public class Classes {
 	 * @throws ReflectionException if the class cannot be loaded
 	 */
 	public static <T> Class<T> getOne(final String className, final ClassLoader classLoader) {
-		try {
-			return JavaObjects.cast(Class.forName(className, false, classLoader));
-		} catch (ClassNotFoundException e) {
-			throw new ReflectionException("Could not load class: " + className, e);
-		}
+		return org.morphix.reflection.Classes.getOne(className, classLoader);
 	}
 
 	/**

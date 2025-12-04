@@ -126,6 +126,8 @@ public class GeneratorProperties {
 		}
 		if (Strings.isEmpty(schemaForObjectClass)) {
 			schemaForObjectClass = Default.SCHEMA_FOR_OBJECT_CLASS;
+		} else {
+			schemaForObjectClass = schemaForObjectClass.toLowerCase();
 		}
 		if (Lists.isEmpty(servers)) {
 			servers = new ArrayList<>();
