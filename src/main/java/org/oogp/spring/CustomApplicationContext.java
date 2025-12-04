@@ -93,6 +93,9 @@ public class CustomApplicationContext implements ApplicationContext {
 	 * @param beanMetadata the metadata of the bean to register
 	 */
 	public void addBean(final BeanMetadata beanMetadata) {
+		if (nameMap.containsKey(beanMetadata.beanName())) {
+			throw new IllegalArgumentException("Bean with name " + beanMetadata.beanName() + " is already registered");
+		}
 		nameMap.put(beanMetadata.beanName(), beanMetadata);
 		classMap.computeIfAbsent(beanMetadata.beanType(), _ -> new ArrayList<>()).add(beanMetadata);
 	}
@@ -144,7 +147,7 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	public String[] getBeanDefinitionNames() {
-		return nameMap.keySet().stream().toArray(String[]::new);
+		return nameMap.keySet().toArray(String[]::new);
 	}
 
 	@Override
@@ -177,7 +180,7 @@ public class CustomApplicationContext implements ApplicationContext {
 				}
 			}
 		}
-		return result.stream().toArray(String[]::new);
+		return result.toArray(String[]::new);
 	}
 
 	@Override
@@ -241,7 +244,7 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	public Object getBean(final String name) throws BeansException {
-		throw new UnsupportedOperationException();
+		return Classes.unsupportedOperation();
 	}
 
 	@Override
@@ -345,7 +348,7 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	public String getMessage(final String code, final Object[] args, final Locale locale) throws NoSuchMessageException {
-		LOGGER.info("code: {}, args: {}, locale: {}", code, args, locale);
+		LOGGER.debug("code: {}, args: {}, locale: {}", code, args, locale);
 		return Classes.unsupportedOperation();
 	}
 

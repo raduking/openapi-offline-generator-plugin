@@ -175,7 +175,7 @@ public class OpenApiSpecSpringDocGenerator {
 
 		Set<String> packages = Arrays.stream(properties.getPackagesToScan().split(","))
 				.map(String::trim)
-				.filter(p -> !p.isEmpty())
+				.filter(pkg -> !pkg.isEmpty())
 				.collect(Collectors.toSet());
 
 		Path projectClassesDir = JavaEnvironment.detectProjectOutputDirectory();
@@ -358,8 +358,9 @@ public class OpenApiSpecSpringDocGenerator {
 
 	private static OpenApiCustomizer normalizeOperationIds() {
 		return openApi -> openApi.getPaths().forEach((_, item) -> {
-			for (PathItem.HttpMethod method : item.readOperationsMap().keySet()) {
-				Operation operation = item.readOperationsMap().get(method);
+			Map<PathItem.HttpMethod, Operation> operationsMap = item.readOperationsMap();
+			for (PathItem.HttpMethod method : operationsMap.keySet()) {
+				Operation operation = operationsMap.get(method);
 				String id = operation.getOperationId();
 				if (id != null && id.startsWith("_")) {
 					String normalizedId = id.substring(1);
