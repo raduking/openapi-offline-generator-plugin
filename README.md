@@ -21,7 +21,7 @@ A Maven plugin for generating OpenAPI documentation offline.
 - Deterministic builds (stable ordering / hashing)
 
 ## Prerequisites
-- Java 21+
+- Java 25+
 - Maven 3.8+
 
 ## Quick Start
@@ -162,7 +162,7 @@ mvn clean install
 - mvn clean deploy -Prelease
 
 ## License
-Apache License 2.0
+[Apache License 2.0](LICENSE)
 
 ## Security
 Report vulnerabilities via private issue or security email channel. Do not open public issues until disclosure window ends.
