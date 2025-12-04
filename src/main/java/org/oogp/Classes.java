@@ -14,7 +14,6 @@ import java.util.Set;
 
 import org.apiphany.lang.Strings;
 import org.morphix.convert.MapConversions;
-import org.morphix.lang.JavaObjects;
 import org.morphix.reflection.Fields;
 import org.morphix.reflection.InstanceCreator;
 import org.morphix.reflection.ReflectionException;
@@ -122,8 +121,8 @@ public class Classes {
 	/**
 	 * Finds all classes within the specified packages that are annotated with at least one of the given annotations.
 	 * <p>
-	 * This method scans each package for classes, checks each class for the presence of any of the specified annotations, and
-	 * collects those classes into a result set.
+	 * This method scans each package for classes, checks each class for the presence of any of the specified annotations,
+	 * and collects those classes into a result set.
 	 *
 	 * @param packages the set of package names to scan for classes
 	 * @param projectClassesDir the directory containing the compiled project classes
