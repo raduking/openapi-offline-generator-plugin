@@ -40,6 +40,7 @@ class OpenApiSpecSpringDocGeneratorTest {
 		GeneratorProperties generatorProperties = new GeneratorProperties();
 		generatorProperties.setPackagesToScan("org.oogp.controller");
 		generatorProperties.setOutputFile(fileName);
+		generatorProperties.setSchemaForObjectClass("object");
 		GeneratorProperties.OAuth2 oAuth2 = new GeneratorProperties.OAuth2();
 		oAuth2.setEnabled(true);
 		oAuth2.setAuthorizationUrl("http://automatically/replaced/on/runtime/by/unknown");
@@ -64,6 +65,7 @@ class OpenApiSpecSpringDocGeneratorTest {
 		GeneratorProperties generatorProperties = new GeneratorProperties();
 		generatorProperties.setPackagesToScan("org.oogp.controller");
 		generatorProperties.setOutputFile(fileName);
+		generatorProperties.setSchemaForObjectClass("object");
 		GeneratorProperties.OAuth2 oAuth2 = new GeneratorProperties.OAuth2();
 		oAuth2.setEnabled(true);
 		oAuth2.setAuthorizationUrl("http://automatically/replaced/on/runtime/by/unknown");
@@ -97,4 +99,25 @@ class OpenApiSpecSpringDocGeneratorTest {
 
 		assertThat(exists, equalTo(true));
 	}
+
+	@Test
+	void shouldBuildOpenApiFileForObjectType() throws IOException {
+		String currentDirectory = Paths.get("").toAbsolutePath().toString();
+		System.setProperty("project.build.outputDirectory", currentDirectory + "/target/test-classes");
+
+		String fileName = currentDirectory + "/src/test/resources/isolated/object.yaml";
+		Path path = Paths.get(fileName);
+		Files.deleteIfExists(path);
+
+		GeneratorProperties generatorProperties = new GeneratorProperties();
+		generatorProperties.setPackagesToScan("org.oogp.object.controller");
+		generatorProperties.setOutputFile(fileName);
+		generatorProperties.setSchemaForObjectClass("object");
+		OpenApiSpecSpringDocGenerator.generate(generatorProperties);
+
+		boolean exists = Files.exists(path);
+
+		assertThat(exists, equalTo(true));
+	}
+
 }

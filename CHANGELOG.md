@@ -10,6 +10,7 @@
 - Upgraded `apiphany` to `1.0.16`.
 - Upgraded `maven-plugin-plugin` to `3.15.2`.
 - Upgraded `maven-compiler-plugin` to `3.14.1`.
+- Added `schemaForObjectClass` to the plugin configuration which defaults to `object` not `string` as before.
 
 ---
 

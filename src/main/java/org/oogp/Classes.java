@@ -161,6 +161,16 @@ public class Classes {
 	}
 
 	/**
+	 * Creates a mutable set containing the specified classes.
+	 *
+	 * @param classes the classes to include in the set
+	 * @return a mutable Set containing the specified classes
+	 */
+	static Set<Class<?>> mutableSetOf(Class<?>... classes) {
+		return org.morphix.reflection.Classes.mutableSetOf(classes);
+	}
+
+	/**
 	 * Throws an UnsupportedOperationException and logs the error. This utility method is used to indicate that a particular
 	 * operation is not supported or not yet implemented.
 	 *

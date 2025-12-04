@@ -2,5 +2,6 @@
 .classpath
 .factorypath
 .settings
+.idea
 
 /target/

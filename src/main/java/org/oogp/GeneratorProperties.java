@@ -40,6 +40,11 @@ public class GeneratorProperties {
 		public static final String GENERATED_OPENAPI_FILE_NAME = "generated-openapi.yaml";
 
 		/**
+		 * The schema name for {@link Object} class.
+		 */
+		public static final String SCHEMA_FOR_OBJECT_CLASS = "object";
+
+		/**
 		 * Hide constructor.
 		 */
 		private Default() {
@@ -70,6 +75,12 @@ public class GeneratorProperties {
 	 */
 	@Parameter
 	private String projectType;
+
+	/**
+	 * The schema value for {@link Object} class.
+	 */
+	@Parameter
+	private String schemaForObjectClass;
 
 	/**
 	 * Server properties.
@@ -112,6 +123,9 @@ public class GeneratorProperties {
 		}
 		if (Strings.isEmpty(projectType)) {
 			projectType = "spring";
+		}
+		if (Strings.isEmpty(schemaForObjectClass)) {
+			schemaForObjectClass = Default.SCHEMA_FOR_OBJECT_CLASS;
 		}
 		if (Lists.isEmpty(servers)) {
 			servers = new ArrayList<>();
@@ -203,6 +217,24 @@ public class GeneratorProperties {
 	 */
 	public void setProjectType(final String projectType) {
 		this.projectType = projectType;
+	}
+
+	/**
+	 * Returns the schema for Object class.
+	 *
+	 * @return the schemaForObjectClass
+	 */
+	public String getSchemaForObjectClass() {
+		return schemaForObjectClass;
+	}
+
+	/**
+	 * Sets the schema for Object class.
+	 *
+	 * @param schemaForObjectClass the schemaForObjectClass to set
+	 */
+	public void setSchemaForObjectClass(String schemaForObjectClass) {
+		this.schemaForObjectClass = schemaForObjectClass;
 	}
 
 	/**

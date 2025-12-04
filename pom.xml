@@ -70,6 +70,8 @@
 		
 		<!-- Testing command line options -->
 		<oogpArgLine>
+			--add-opens java.base/java.lang.reflect=ALL-UNNAMED
+			--add-opens java.base/sun.reflect.annotation=ALL-UNNAMED
 		</oogpArgLine>
 	</properties>
 
@@ -136,7 +138,7 @@
 		<dependency>
 			<groupId>io.github.raduking</groupId>
 			<artifactId>apiphany</artifactId>
-			<version>1.0.16</version>
+			<version>1.0.17</version>
 		</dependency>
 
 		<!-- Javadoc -->

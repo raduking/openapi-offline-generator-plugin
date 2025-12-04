@@ -96,7 +96,6 @@ paths:
     get:
       tags:
       - Data
-      - DataApi
       operationId: getObjectAsString
       responses:
         "200":
@@ -105,6 +104,24 @@ paths:
             application/json:
               schema:
                 type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+  /api/test/data/object-object:
+    get:
+      tags:
+      - Data
+      operationId: getStringAsObject
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
         "500":
           description: Internal Server Error
           content:

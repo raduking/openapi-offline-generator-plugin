@@ -51,6 +51,7 @@ import org.springdoc.webmvc.core.providers.SpringWebMvcProvider;
 import org.springdoc.webmvc.core.service.RequestService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.DelegatingMessageSource;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -116,7 +117,10 @@ public class OpenApiSpecSpringDocGenerator {
 	/**
 	 * Annotations that define if a class should take part in the Open API generation.
 	 */
-	private static final Set<Class<? extends Annotation>> REQUEST_HANDLER_ANNOTATIONS = Set.of(RestController.class, RequestMapping.class);
+	private static final Set<Class<? extends Annotation>> REQUEST_HANDLER_ANNOTATIONS = Set.of(
+			RestController.class,
+			RequestMapping.class,
+			Controller.class);
 
 	/**
 	 * Hide constructor.
@@ -175,7 +179,6 @@ public class OpenApiSpecSpringDocGenerator {
 		LOGGER.info("Using classes directory: {}", projectClassesDir.toAbsolutePath());
 
 		Set<Class<?>> requestHandlerClasses = findRequestHandlerClasses(packages, projectClassesDir, REQUEST_HANDLER_ANNOTATIONS);
-
 		ClassLoader projectClassLoader = Thread.currentThread().getContextClassLoader();
 		CustomApplicationContext context = new CustomApplicationContext(projectClassLoader);
 		for (Class<?> requestHandlerClass : requestHandlerClasses) {
@@ -188,6 +191,8 @@ public class OpenApiSpecSpringDocGenerator {
 		}
 
 		String outputFile = properties.getOutputFile();
+		configureObjectClassSchema(properties.getSchemaForObjectClass().toLowerCase());
+
 		SpringDocOpenApiResource openApiResource = buildSpringDocOpenApiResource(outputFile, context);
 		OpenAPI openAPI = openApiResource.getOpenApi(null, Locale.ENGLISH);
 
@@ -253,8 +258,9 @@ public class OpenApiSpecSpringDocGenerator {
 	}
 
 	private static void registerControllerMethods(final RequestMappingHandlerMapping handlerMapping, final Object controller) {
-		for (Method method : Methods.getAllDeclaredInHierarchy(controller.getClass())) {
+		for (Method method : Methods.Complete.getAllDeclaredInHierarchy(controller.getClass(), Classes.mutableSetOf(Object.class))) {
 			RequestMapping methodMapping = method.getAnnotation(RequestMapping.class);
+			SwaggerAnnotations.overrideAnnotations(method, "object");
 			if (methodMapping != null) {
 				RequestMappingInfo mappingInfo = RequestMappingInfo
 						.paths(methodMapping.value())
@@ -271,8 +277,8 @@ public class OpenApiSpecSpringDocGenerator {
 
 	private static SpringDocOpenApiResource buildSpringDocOpenApiResource(final String outputFile, final CustomApplicationContext context) {
 		SpringDocConfigProperties springDocConfigProperties = new SpringDocConfigProperties();
-		String properties = JsonBuilder.toJson(springDocConfigProperties);
-		LOGGER.info("Spring Doc Config properties: {}", properties);
+		String jsonSpringDocConfigProperties = JsonBuilder.toJson(springDocConfigProperties);
+		LOGGER.info("Spring Doc Config properties: {}", jsonSpringDocConfigProperties);
 
 		SpringDocUtils.getConfig().initExtraSchemas();
 		ObjectMapperProvider objectMapperProvider = new ObjectMapperProvider(springDocConfigProperties);
@@ -343,7 +349,7 @@ public class OpenApiSpecSpringDocGenerator {
 				Optional.empty(),
 				Optional.empty(),
 				Optional.empty(),
-				Optional.ofNullable(springWebMvcProvider),
+				Optional.of(springWebMvcProvider),
 				objectMapperProvider);
 
 		return new SpringDocOpenApiResource(
@@ -398,4 +404,12 @@ public class OpenApiSpecSpringDocGenerator {
 	private static void addExtensions(final OpenAPI openAPI, final Map<String, String> extensions) {
 		Maps.safe(extensions).forEach(openAPI::addExtension);
 	}
+
+	private static void configureObjectClassSchema(String schemaForObjectClass) {
+		if ("string".equals(schemaForObjectClass)) {
+			// ignore string configuration since it's the default in springdoc
+			return;
+		}
+	}
+
 }

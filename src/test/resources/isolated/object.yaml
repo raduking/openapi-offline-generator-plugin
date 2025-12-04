@@ -1,0 +1,22 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers: []
+tags:
+- name: Object
+  description: the data
+paths:
+  /api/test/object/string:
+    get:
+      tags:
+      - Object
+      operationId: getStringAsObject
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+components: {}
