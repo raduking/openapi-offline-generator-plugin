@@ -1,4 +1,4 @@
-package org.oogp;
+package org.oogp.spring;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -21,6 +21,10 @@ import org.apiphany.lang.collections.Lists;
 import org.apiphany.lang.collections.Maps;
 import org.morphix.reflection.InstanceCreator;
 import org.morphix.reflection.Methods;
+import org.oogp.Classes;
+import org.oogp.GeneratorProperties;
+import org.oogp.JavaEnvironment;
+import org.oogp.SwaggerAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.converters.AdditionalModelsConverter;
@@ -93,7 +97,7 @@ import io.swagger.v3.oas.models.servers.Server;
  *
  * <pre>{@code
  * java -cp target/classes:<dependencies> \
- *     org.oogp.OpenApiSpecSpringDocGenerator \
+ *     org.oogp.spring.OpenApiSpecSpringDocGenerator \
  *     "com.example.app.controller" \
  *     "target/generated/openapi.yaml"
  * }</pre>
@@ -174,7 +178,7 @@ public class OpenApiSpecSpringDocGenerator {
 				.filter(p -> !p.isEmpty())
 				.collect(Collectors.toSet());
 
-		Path projectClassesDir = Classes.detectDirectory();
+		Path projectClassesDir = JavaEnvironment.detectProjectOutputDirectory();
 		LOGGER.info("Using classes directory: {}", projectClassesDir.toAbsolutePath());
 
 		Set<Class<?>> requestHandlerClasses = Classes.findWithAnyAnnotation(packages, projectClassesDir, REQUEST_HANDLER_ANNOTATIONS);

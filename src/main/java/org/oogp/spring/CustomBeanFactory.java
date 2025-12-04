@@ -1,10 +1,11 @@
-package org.oogp;
+package org.oogp.spring;
 
 import java.beans.PropertyEditor;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
+import org.oogp.Classes;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.beans.PropertyEditorRegistry;

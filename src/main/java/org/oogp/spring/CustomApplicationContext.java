@@ -1,4 +1,4 @@
-package org.oogp;
+package org.oogp.spring;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.morphix.lang.JavaObjects;
+import org.oogp.Classes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -65,14 +66,14 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomApplicationContext.class);
 
-	private Map<Class<?>, List<BeanMetadata>> classMap = new HashMap<>();
-	private Map<String, BeanMetadata> nameMap = new HashMap<>();
+	private final Map<Class<?>, List<BeanMetadata>> classMap = new HashMap<>();
+	private final Map<String, BeanMetadata> nameMap = new HashMap<>();
 
-	private Instant startupDate = Instant.now();
+	private final Instant startupDate = Instant.now();
 
 	private final ClassLoader classLoader;
 
-	private CustomBeanFactory customBeanFactory;
+	private final CustomBeanFactory customBeanFactory;
 
 	/**
 	 * Constructs a new CustomApplicationContext with the specified class loader.

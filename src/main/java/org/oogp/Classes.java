@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apiphany.lang.Strings;
 import org.morphix.convert.MapConversions;
 import org.morphix.reflection.Fields;
 import org.morphix.reflection.InstanceCreator;
@@ -46,25 +45,6 @@ public class Classes {
 	 */
 	private Classes() {
 		// empty
-	}
-
-	/**
-	 * Detects the project's build output directory containing compiled classes.
-	 * <p>
-	 * This method attempts to locate the directory where compiled class files are stored by reading the
-	 * 'project.build.outputDirectory' system property, which is typically set by build tools like Maven.
-	 *
-	 * @return a Path object representing the project's build output directory
-	 * @throws IllegalStateException if the 'project.build.outputDirectory' system property is not set or is empty,
-	 *     indicating the classes directory could not be detected
-	 */
-	public static Path detectDirectory() {
-		String buildOutput = System.getProperty("project.build.outputDirectory");
-		if (Strings.isNotEmpty(buildOutput)) {
-			return Path.of(buildOutput);
-		}
-		LOGGER.error("Missing 'project.build.outputDirectory' property");
-		throw new IllegalStateException("Could not detect project classes directory");
 	}
 
 	/**
@@ -129,7 +109,7 @@ public class Classes {
 	 * @param annotations the set of annotation classes to look for on the classes
 	 * @return a Set of Class objects that are annotated with at least one of the specified annotations
 	 */
-	static Set<Class<?>> findWithAnyAnnotation(final Set<String> packages, final Path projectClassesDir,
+	public static Set<Class<?>> findWithAnyAnnotation(final Set<String> packages, final Path projectClassesDir,
 			final Set<Class<? extends Annotation>> annotations) {
 		Set<Class<?>> classesWithAnnotations = new HashSet<>();
 		for (String pkg : packages) {
@@ -196,7 +176,7 @@ public class Classes {
 	 * @param classes the classes to include in the set
 	 * @return a mutable Set containing the specified classes
 	 */
-	static Set<Class<?>> mutableSetOf(Class<?>... classes) {
+	public static Set<Class<?>> mutableSetOf(Class<?>... classes) {
 		return org.morphix.reflection.Classes.mutableSetOf(classes);
 	}
 

@@ -1,4 +1,4 @@
-package org.oogp;
+package org.oogp.jakarta;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -10,6 +10,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.oogp.Classes;
+import org.oogp.GeneratorProperties;
+import org.oogp.JavaEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,7 +44,7 @@ import io.swagger.v3.oas.models.OpenAPI;
  *
  * <pre>{@code
  * java -cp target/classes:<dependencies> \
- *     org.oogp.OpenApiSpecJakartaGenerator \
+ *     org.oogp.jakarta.OpenApiSpecJakartaGenerator \
  *     "com.example.app.controller" \
  *     "target/generated/openapi.yaml"
  * }</pre>
@@ -110,7 +113,7 @@ public class OpenApiSpecJakartaGenerator {
 				.filter(p -> !p.isEmpty())
 				.collect(Collectors.toSet());
 
-		Path projectClassesDir = Classes.detectDirectory();
+		Path projectClassesDir = JavaEnvironment.detectProjectOutputDirectory();
 		LOGGER.info("Using classes directory: {}", projectClassesDir.toAbsolutePath());
 
 		Set<Class<?>> controllers = new HashSet<>();

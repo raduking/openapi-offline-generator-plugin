@@ -1,4 +1,4 @@
-package org.oogp;
+package org.oogp.spring;
 
 import java.util.Set;
 

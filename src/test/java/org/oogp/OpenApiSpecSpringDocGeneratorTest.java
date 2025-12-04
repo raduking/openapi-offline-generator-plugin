@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.oogp.spring.OpenApiSpecSpringDocGenerator;
 
 /**
  * Test class for {@link OpenApiSpecSpringDocGenerator}.
