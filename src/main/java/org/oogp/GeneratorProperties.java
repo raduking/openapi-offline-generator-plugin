@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.apiphany.json.JsonBuilder;
 import org.apiphany.lang.Strings;
+import org.apiphany.lang.annotation.Ignored;
 import org.apiphany.lang.collections.Lists;
 
 /**
@@ -108,18 +109,18 @@ public class GeneratorProperties {
 	}
 
 	/**
-	 * Fills in default values for missing fields using MavenProject context.
+	 * Fills in default values for missing fields.
 	 *
-	 * @param project the Maven project
+	 * @param projectBuildDirectory the project build directory
+	 * @param projectBuildOutputDirectory the project build output directory
 	 */
-	public void applyDefaults(final MavenProject project) {
+	public void applyDefaults(String projectBuildDirectory, String projectBuildOutputDirectory) {
 		if (Strings.isEmpty(outputFile)) {
-			String buildDir = project != null ? project.getBuild().getDirectory() : Default.BUILD_DIRECTORY;
+			String buildDir = projectBuildDirectory != null ? projectBuildDirectory : Default.BUILD_DIRECTORY;
 			outputFile = buildDir + "/" + Default.GENERATED_OPENAPI_FILE_NAME;
 		}
 		if (Strings.isEmpty(classesDir)) {
-			String outputDir = project != null ? project.getBuild().getOutputDirectory() : Default.OUTPUT_DIRECTORY;
-			classesDir = outputDir;
+			classesDir = projectBuildOutputDirectory != null ? projectBuildOutputDirectory : Default.OUTPUT_DIRECTORY;
 		}
 		if (Strings.isEmpty(projectType)) {
 			projectType = "spring";
@@ -132,13 +133,13 @@ public class GeneratorProperties {
 		if (Lists.isEmpty(servers)) {
 			servers = new ArrayList<>();
 			Server defaultServer = new Server();
-			defaultServer.applyDefaults(project);
+			defaultServer.applyDefaults();
 			servers.add(defaultServer);
 		}
 		if (null == oauth2) {
 			oauth2 = new OAuth2();
 		}
-		oauth2.applyDefaults(project);
+		oauth2.applyDefaults();
 	}
 
 	/**
@@ -280,6 +281,8 @@ public class GeneratorProperties {
 	 *
 	 * @return true if OAuth2 is enabled, false otherwise
 	 */
+	@Ignored
+	@JsonIgnore
 	public boolean isOAuth2Enabled() {
 		return oauth2 != null && oauth2.isEnabled();
 	}
@@ -330,10 +333,8 @@ public class GeneratorProperties {
 
 		/**
 		 * Fills in default values for missing fields using MavenProject context.
-		 *
-		 * @param project the Maven project
 		 */
-		public void applyDefaults(final MavenProject project) {
+		public void applyDefaults() {
 			if (Strings.isEmpty(authorizationUrl)) {
 				authorizationUrl = "http://automatically/replaced/on/runtime";
 			}
@@ -398,10 +399,8 @@ public class GeneratorProperties {
 
 		/**
 		 * Fills in default values for missing fields using MavenProject context.
-		 *
-		 * @param project the Maven project
 		 */
-		public void applyDefaults(final MavenProject project) {
+		public void applyDefaults() {
 			if (Strings.isEmpty(url)) {
 				url = "/";
 			}

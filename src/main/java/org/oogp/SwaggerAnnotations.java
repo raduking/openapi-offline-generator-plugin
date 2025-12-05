@@ -117,7 +117,7 @@ public interface SwaggerAnnotations {
 	 * @param schemaForObjectClass the new type value to set for Object class schemas
 	 */
 	static void overrideAll(final Method method, final String schemaForObjectClass) {
-		Operation operation = overrideValue(method, Operation.class, AttributeName.TYPE, schemaForObjectClass);
+		Operation operation = method.getAnnotation(Operation.class);
 		if (null == operation) {
 			return;
 		}

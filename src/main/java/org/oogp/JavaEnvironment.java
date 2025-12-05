@@ -1,5 +1,6 @@
 package org.oogp;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
@@ -62,5 +63,18 @@ public interface JavaEnvironment {
 			String message = String.format("%s: %s", property, System.getProperty(property));
 			messageConsumer.accept(message);
 		}
+	}
+
+	/**
+	 * Gets the path to the Java executable.
+	 *
+	 * @return the Java executable path as a String
+	 */
+	static String getJavaExecutablePath() {
+		String javaHome = System.getProperty("java.home");
+		if (javaHome == null || javaHome.isEmpty()) {
+			javaHome = "java";
+		}
+		return javaHome + File.separator + "bin" + File.separator + "java";
 	}
 }
