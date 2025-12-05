@@ -241,7 +241,7 @@ public class OpenApiSpecSpringDocGenerator {
 			String schemaForObjectClass) {
 		for (Method method : Methods.Complete.getAllDeclaredInHierarchy(controller.getClass(), Classes.mutableSetOf(Object.class))) {
 			RequestMapping methodMapping = method.getAnnotation(RequestMapping.class);
-			SwaggerAnnotations.overrideAnnotations(method, schemaForObjectClass);
+			SwaggerAnnotations.overrideAll(method, schemaForObjectClass);
 			if (methodMapping != null) {
 				RequestMappingInfo mappingInfo = RequestMappingInfo
 						.paths(methodMapping.value())

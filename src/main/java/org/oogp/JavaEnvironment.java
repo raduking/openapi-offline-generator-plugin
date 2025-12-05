@@ -1,12 +1,12 @@
 package org.oogp;
 
-import org.apiphany.lang.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
+
+import org.apiphany.lang.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility interface for Java version and environment information.

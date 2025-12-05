@@ -1,15 +1,5 @@
 package org.oogp;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.apiphany.lang.Strings;
-import org.morphix.reflection.Constructors;
-import org.morphix.reflection.Fields;
-import org.morphix.reflection.Methods;
-import org.morphix.reflection.ReflectionException;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -17,6 +7,17 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apiphany.lang.Strings;
+import org.morphix.reflection.Constructors;
+import org.morphix.reflection.Fields;
+import org.morphix.reflection.Methods;
+import org.morphix.reflection.ReflectionException;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 /**
  * Utility methods for overriding Swagger annotations.
@@ -56,7 +57,7 @@ public interface SwaggerAnnotations {
 	 * @return The original annotation instance.
 	 */
 	@SuppressWarnings("unchecked")
-	static <A extends Annotation> A overrideAnnotationType(Method method, Class<A> annotationClass, String typeOverride) {
+	static <A extends Annotation> A overrideValue(final Method method, final Class<A> annotationClass, final String attribute, final String value) {
 		A annotation = method.getAnnotation(annotationClass);
 		if (null == annotation) {
 			return annotation;
@@ -67,10 +68,9 @@ public interface SwaggerAnnotations {
 			Object val = Methods.IgnoreAccess.invoke(m, annotation);
 			values.put(m.getName(), val);
 		}
+		values.put(attribute, value);
 
-		values.put(AttributeName.TYPE, typeOverride);
-
-		InvocationHandler proxyHandler = (proxy, m, args) -> {
+		InvocationHandler proxyHandler = (_, m, args) -> {
 			if (values.containsKey(m.getName())) {
 				return values.get(m.getName());
 			}
@@ -98,7 +98,7 @@ public interface SwaggerAnnotations {
 	 * @param attribute the attribute name to override
 	 * @param value the new value to set
 	 */
-	static <A extends Annotation> void overrideAnnotationValue(A annotation, String attribute, Object value) {
+	static <A extends Annotation> void overrideValue(final A annotation, final String attribute, final Object value) {
 		InvocationHandler handler = Proxy.getInvocationHandler(annotation);
 		try {
 			Field memberValuesField = Fields.getOneDeclared(handler, "memberValues");
@@ -115,8 +115,8 @@ public interface SwaggerAnnotations {
 	 * @param method the method containing the Operation annotation
 	 * @param schemaForObjectClass the new type value to set for Object class schemas
 	 */
-	static void overrideAnnotations(Method method, String schemaForObjectClass) {
-		Operation operation = overrideAnnotationType(method, Operation.class, schemaForObjectClass);
+	static void overrideAll(final Method method, final String schemaForObjectClass) {
+		Operation operation = overrideValue(method, Operation.class, AttributeName.TYPE, schemaForObjectClass);
 		if (null == operation) {
 			return;
 		}
@@ -127,7 +127,7 @@ public interface SwaggerAnnotations {
 					continue;
 				}
 				if (Object.class.equals(schema.implementation()) && Strings.isEmpty(schema.type())) {
-					overrideAnnotationValue(schema, AttributeName.TYPE, schemaForObjectClass);
+					overrideValue(schema, AttributeName.TYPE, schemaForObjectClass);
 				}
 			}
 		}
