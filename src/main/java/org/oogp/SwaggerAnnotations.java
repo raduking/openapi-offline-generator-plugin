@@ -47,14 +47,14 @@ public interface SwaggerAnnotations {
 	}
 
 	/**
-	 * Overrides the 'type' attribute of a given annotation on a method.
+	 * Overrides a specific attribute value of an annotation instance present on a method.
 	 *
-	 * @param <A> The type of the annotation.
+	 * @param <A> the type of the annotation
 	 *
-	 * @param method The method containing the annotation.
-	 * @param annotationClass The class of the annotation to override.
-	 * @param typeOverride The new type value to set.
-	 * @return The original annotation instance.
+	 * @param method the method containing the annotation
+	 * @param annotationClass the class of the annotation to override
+	 * @param typeOverride the new type value to set
+	 * @return the original annotation instance
 	 */
 	@SuppressWarnings("unchecked")
 	static <A extends Annotation> A overrideValue(final Method method, final Class<A> annotationClass, final String attribute, final String value) {
