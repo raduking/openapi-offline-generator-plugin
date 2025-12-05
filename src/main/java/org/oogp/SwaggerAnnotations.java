@@ -53,7 +53,8 @@ public interface SwaggerAnnotations {
 	 *
 	 * @param method the method containing the annotation
 	 * @param annotationClass the class of the annotation to override
-	 * @param typeOverride the new type value to set
+	 * @param attribute the attribute name to override
+	 * @param value the new value to set
 	 * @return the original annotation instance
 	 */
 	@SuppressWarnings("unchecked")
