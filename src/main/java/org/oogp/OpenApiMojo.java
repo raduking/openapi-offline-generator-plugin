@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
@@ -19,6 +18,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apiphany.json.JsonBuilder;
 import org.oogp.jakarta.OpenApiSpecJakartaGenerator;
 import org.oogp.spring.OpenApiSpecSpringDocGenerator;
 
@@ -125,8 +125,8 @@ public class OpenApiMojo extends AbstractMojo {
 		InputStream inputStream = null;
 		try {
 			Path tempPropertiesFile = Files.createTempFile("openapi-generator-properties", ".json");
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.writeValue(tempPropertiesFile.toFile(), properties);
+			String json = JsonBuilder.toJson(properties);
+			Files.writeString(tempPropertiesFile, json);
 
 			List<String> cp = new ArrayList<>();
 			cp.add(project.getBuild().getOutputDirectory());
@@ -145,6 +145,7 @@ public class OpenApiMojo extends AbstractMojo {
 			cmd.add("-cp");
 			cmd.add(classpath);
 			cmd.add("-Dproject.build.outputDirectory=" + project.getBuild().getOutputDirectory());
+			cmd.add("-D" + JsonBuilder.Property.INDENT_OUTPUT + "=true");
 			cmd.add(OpenApiGenerator.class.getName());
 			cmd.add(tempPropertiesFile.toAbsolutePath().toString());
 

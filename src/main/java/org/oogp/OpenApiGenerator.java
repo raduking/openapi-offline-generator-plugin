@@ -1,6 +1,6 @@
 package org.oogp;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apiphany.json.JsonBuilder;
 import org.morphix.reflection.Constructors;
 import org.oogp.jakarta.OpenApiSpecJakartaGenerator;
 import org.oogp.spring.OpenApiSpecSpringDocGenerator;
@@ -27,16 +27,15 @@ public class OpenApiGenerator {
 			System.exit(2);
 		}
 
-		ObjectMapper mapper = new ObjectMapper();
 		Path propertiesPath = Path.of(args[0]);
 		String json = Files.readString(propertiesPath);
-		GeneratorProperties props = mapper.readValue(json, GeneratorProperties.class);
-		props.applyDefaults(null, null);
+		GeneratorProperties properties = JsonBuilder.fromJson(json, GeneratorProperties.class);
+		properties.applyDefaults(null, null);
 
-		switch (ProjectType.fromString(props.getProjectType())) {
-			case JAKARTA -> OpenApiSpecJakartaGenerator.generate(props);
-			case SPRING -> OpenApiSpecSpringDocGenerator.generate(props);
-			default -> throw new RuntimeException("Unknown project type: " + props.getProjectType());
+		switch (ProjectType.fromString(properties.getProjectType())) {
+			case JAKARTA -> OpenApiSpecJakartaGenerator.generate(properties);
+			case SPRING -> OpenApiSpecSpringDocGenerator.generate(properties);
+			default -> throw new RuntimeException("Unknown project type: " + properties.getProjectType());
 		}
 	}
 

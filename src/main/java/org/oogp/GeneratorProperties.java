@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apiphany.json.JsonBuilder;
 import org.apiphany.lang.Strings;
@@ -282,7 +281,6 @@ public class GeneratorProperties {
 	 * @return true if OAuth2 is enabled, false otherwise
 	 */
 	@Ignored
-	@JsonIgnore
 	public boolean isOAuth2Enabled() {
 		return oauth2 != null && oauth2.isEnabled();
 	}
