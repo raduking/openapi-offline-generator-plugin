@@ -154,7 +154,7 @@ public class OpenApiSpecSpringDocGenerator {
 		}
 		try {
 			GeneratorProperties properties = Classes.convertFromStringArray(args, GeneratorProperties.class);
-			properties.applyDefaults(null);
+			properties.applyDefaults(null, null);
 			generate(properties);
 		} catch (Exception e) {
 			LOGGER.error("Error generating Open API", e);

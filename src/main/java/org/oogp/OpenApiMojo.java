@@ -2,6 +2,7 @@ package org.oogp;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -9,6 +10,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -16,6 +18,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apiphany.json.JsonBuilder;
 import org.oogp.jakarta.OpenApiSpecJakartaGenerator;
 import org.oogp.spring.OpenApiSpecSpringDocGenerator;
 
@@ -37,10 +40,22 @@ public class OpenApiMojo extends AbstractMojo {
 	private MavenProject project;
 
 	/**
+	 * The plugin artifacts.
+	 */
+	@Parameter(defaultValue = "${plugin.artifacts}", readonly = true, required = true)
+	private List<Artifact> pluginArtifacts;
+
+	/**
 	 * The properties.
 	 */
 	@Parameter
 	private GeneratorProperties properties;
+
+	/**
+	 * Whether to fork a new JVM process to run the generation.
+	 */
+	@Parameter(defaultValue = "true")
+	private Boolean fork;
 
 	/**
 	 * Default constructor.
@@ -57,11 +72,10 @@ public class OpenApiMojo extends AbstractMojo {
 		if (null == properties) {
 			properties = new GeneratorProperties();
 		}
-		try (URLClassLoader projectClassLoader = buildProjectClassLoader()) {
-			properties.applyDefaults(project);
+		try {
+			properties.applyDefaults(project.getBuild().getDirectory(), project.getBuild().getOutputDirectory());
 
 			JavaEnvironment.info(getLog()::info);
-
 			getLog().info("Generating OpenAPI spec...");
 			getLog().info("   Classes directory: " + properties.getClassesDir());
 			getLog().info("   Packages to scan: " + properties.getPackagesToScan());
@@ -70,7 +84,24 @@ public class OpenApiMojo extends AbstractMojo {
 			Path outputFilePath = Path.of(properties.getOutputFile());
 			// ensure directories exist
 			Files.createDirectories(outputFilePath.getParent());
+		} catch (Exception e) {
+			throw new MojoExecutionException("Failed to apply default properties", e);
+		}
 
+		if (fork) {
+			runForked();
+		} else {
+			run();
+		}
+	}
+
+	/**
+	 * Runs the generation in the same Maven process.
+	 *
+	 * @throws MojoExecutionException when generation fails
+	 */
+	private void run() throws MojoExecutionException {
+		try (URLClassLoader projectClassLoader = buildProjectClassLoader()) {
 			System.setProperty("project.build.outputDirectory", project.getBuild().getOutputDirectory());
 			Thread.currentThread().setContextClassLoader(projectClassLoader);
 
@@ -82,6 +113,66 @@ public class OpenApiMojo extends AbstractMojo {
 		} catch (Exception e) {
 			getLog().info("Error generating OpenAPI spec: " + e.getMessage());
 			throw new MojoExecutionException("Failed to generate OpenAPI spec", e);
+		}
+	}
+
+	/**
+	 * Runs the generation in a forked JVM process.
+	 *
+	 * @throws MojoExecutionException when generation fails
+	 */
+	private void runForked() throws MojoExecutionException {
+		InputStream inputStream = null;
+		try {
+			Path tempPropertiesFile = Files.createTempFile("openapi-generator-properties", ".json");
+			String json = JsonBuilder.toJson(properties);
+			Files.writeString(tempPropertiesFile, json);
+
+			List<String> cp = new ArrayList<>();
+			cp.add(project.getBuild().getOutputDirectory());
+			cp.addAll(project.getRuntimeClasspathElements());
+			File pluginJar = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+			cp.add(pluginJar.getAbsolutePath());
+			for (Artifact a : pluginArtifacts) {
+				cp.add(a.getFile().getAbsolutePath());
+			}
+			String classpath = String.join(File.pathSeparator, cp);
+
+			List<String> cmd = new ArrayList<>();
+			cmd.add(JavaEnvironment.getJavaExecutablePath());
+			cmd.add("--add-opens=java.base/java.lang.reflect=ALL-UNNAMED");
+			cmd.add("--add-opens=java.base/sun.reflect.annotation=ALL-UNNAMED");
+			cmd.add("-cp");
+			cmd.add(classpath);
+			cmd.add("-Dproject.build.outputDirectory=" + project.getBuild().getOutputDirectory());
+			cmd.add("-D" + JsonBuilder.Property.INDENT_OUTPUT + "=true");
+			cmd.add(OpenApiGenerator.class.getName());
+			cmd.add(tempPropertiesFile.toAbsolutePath().toString());
+
+			getLog().info("Forking JVM to generate OpenAPI spec...");
+			ProcessBuilder processBuilder = new ProcessBuilder(cmd)
+					.redirectErrorStream(true);
+			Process process = processBuilder.start();
+
+			inputStream = process.getInputStream();
+			inputStream.transferTo(System.out);
+
+			int exitCode = process.waitFor();
+
+			Files.deleteIfExists(tempPropertiesFile);
+			if (exitCode != 0) {
+				throw new MojoExecutionException("Forked OpenAPI generation process exited with code " + exitCode);
+			}
+		} catch (Exception e) {
+			throw new MojoExecutionException("Failed to fork OpenAPI generation process", e);
+		} finally {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					getLog().warn("Failed to close process input stream", e);
+				}
+			}
 		}
 	}
 
