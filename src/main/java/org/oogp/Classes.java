@@ -1,6 +1,7 @@
 package org.oogp;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -11,9 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apiphany.lang.Strings;
 import org.morphix.convert.MapConversions;
-import org.morphix.lang.JavaObjects;
 import org.morphix.reflection.Fields;
 import org.morphix.reflection.InstanceCreator;
 import org.morphix.reflection.ReflectionException;
@@ -46,25 +45,6 @@ public class Classes {
 	 */
 	private Classes() {
 		// empty
-	}
-
-	/**
-	 * Detects the project's build output directory containing compiled classes.
-	 * <p>
-	 * This method attempts to locate the directory where compiled class files are stored by reading the
-	 * 'project.build.outputDirectory' system property, which is typically set by build tools like Maven.
-	 *
-	 * @return a Path object representing the project's build output directory
-	 * @throws IllegalStateException if the 'project.build.outputDirectory' system property is not set or is empty,
-	 *     indicating the classes directory could not be detected
-	 */
-	public static Path detectDirectory() {
-		String buildOutput = System.getProperty("project.build.outputDirectory");
-		if (Strings.isNotEmpty(buildOutput)) {
-			return Path.of(buildOutput);
-		}
-		LOGGER.error("Missing 'project.build.outputDirectory' property");
-		throw new IllegalStateException("Could not detect project classes directory");
 	}
 
 	/**
@@ -119,6 +99,40 @@ public class Classes {
 	}
 
 	/**
+	 * Finds all classes within the specified packages that are annotated with at least one of the given annotations.
+	 * <p>
+	 * This method scans each package for classes, checks each class for the presence of any of the specified annotations,
+	 * and collects those classes into a result set.
+	 *
+	 * @param packages the set of package names to scan for classes
+	 * @param projectClassesDir the directory containing the compiled project classes
+	 * @param annotations the set of annotation classes to look for on the classes
+	 * @return a Set of Class objects that are annotated with at least one of the specified annotations
+	 */
+	public static Set<Class<?>> findWithAnyAnnotation(final Set<String> packages, final Path projectClassesDir,
+			final Set<Class<? extends Annotation>> annotations) {
+		Set<Class<?>> classesWithAnnotations = new HashSet<>();
+		for (String pkg : packages) {
+			LOGGER.info("Scanning package: {}", pkg);
+			Set<Class<?>> classes = findInPackage(pkg, projectClassesDir);
+			for (Class<?> cls : classes) {
+				boolean hasAtLeastOneOfTheAnnotations = false;
+				for (Class<? extends Annotation> annotation : annotations) {
+					boolean hasAnnotation = null != cls.getAnnotation(annotation);
+					if (hasAnnotation) {
+						LOGGER.info("Found {} on: {}", annotation, cls);
+					}
+					hasAtLeastOneOfTheAnnotations |= hasAnnotation;
+				}
+				if (hasAtLeastOneOfTheAnnotations) {
+					classesWithAnnotations.add(cls);
+				}
+			}
+		}
+		return classesWithAnnotations;
+	}
+
+	/**
 	 * Converts a string array to an instance of the specified class by mapping array elements to the class fields in
 	 * declaration order.
 	 * <ul>
@@ -153,11 +167,17 @@ public class Classes {
 	 * @throws ReflectionException if the class cannot be loaded
 	 */
 	public static <T> Class<T> getOne(final String className, final ClassLoader classLoader) {
-		try {
-			return JavaObjects.cast(Class.forName(className, false, classLoader));
-		} catch (ClassNotFoundException e) {
-			throw new ReflectionException("Could not load class: " + className, e);
-		}
+		return org.morphix.reflection.Classes.getOne(className, classLoader);
+	}
+
+	/**
+	 * Creates a mutable set containing the specified classes.
+	 *
+	 * @param classes the classes to include in the set
+	 * @return a mutable Set containing the specified classes
+	 */
+	public static Set<Class<?>> mutableSetOf(Class<?>... classes) {
+		return org.morphix.reflection.Classes.mutableSetOf(classes);
 	}
 
 	/**

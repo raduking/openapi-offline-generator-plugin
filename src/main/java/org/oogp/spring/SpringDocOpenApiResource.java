@@ -1,4 +1,4 @@
-package org.oogp;
+package org.oogp.spring;
 
 import java.util.Locale;
 
@@ -35,7 +35,7 @@ public class SpringDocOpenApiResource extends OpenApiResource {
 	 * @param springDocCustomizers the SpringDoc customizers
 	 * @param springDocProviders the SpringDoc providers
 	 */
-	protected SpringDocOpenApiResource(
+	public SpringDocOpenApiResource( // NOSONAR we need to pass all these dependencies
 			final String groupName,
 			final PropertyResolverUtils propertyResolverUtils,
 			final OpenAPIService openAPIService,

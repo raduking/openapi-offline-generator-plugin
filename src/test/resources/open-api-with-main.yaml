@@ -68,6 +68,66 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/UserCacheInfo"
+  /api/test/info/object-object:
+    get:
+      tags:
+      - info-controller
+      operationId: getObjectAsObject
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/test/info/object-object-json:
+    get:
+      tags:
+      - info-controller
+      operationId: getObjectAsObjectJson
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /api/test/data/object-string:
+    get:
+      tags:
+      - Data
+      operationId: getObjectAsString
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+  /api/test/data/object-object:
+    get:
+      tags:
+      - Data
+      operationId: getStringAsObject
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
 components:
   schemas:
     UserCacheInfo:
@@ -81,3 +141,22 @@ components:
           type: array
           items:
             type: string
+    ProblemDetail:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+          format: int32
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri
+        properties:
+          type: object
+          additionalProperties: {}

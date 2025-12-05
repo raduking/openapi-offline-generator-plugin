@@ -1,11 +1,14 @@
 package org.oogp;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apiphany.json.JsonBuilder;
 import org.apiphany.lang.Strings;
+import org.apiphany.lang.collections.Lists;
 
 /**
  * All the configurable properties in the generator.
@@ -13,6 +16,41 @@ import org.apiphany.lang.Strings;
  * @author Radu Sebastian LAZIN
  */
 public class GeneratorProperties {
+
+	/**
+	 * Defaults name space class.
+	 *
+	 * @author Radu Sebastian LAZIN
+	 */
+	public static class Default {
+
+		/**
+		 * The default build directory.
+		 */
+		public static final String BUILD_DIRECTORY = "target";
+
+		/**
+		 * The default classes directory.
+		 */
+		public static final String OUTPUT_DIRECTORY = "target/classes";
+
+		/**
+		 * The default generated OpenAPI YAML file.
+		 */
+		public static final String GENERATED_OPENAPI_FILE_NAME = "generated-openapi.yaml";
+
+		/**
+		 * The schema name for {@link Object} class.
+		 */
+		public static final String SCHEMA_FOR_OBJECT_CLASS = "object";
+
+		/**
+		 * Hide constructor.
+		 */
+		private Default() {
+			// empty
+		}
+	}
 
 	/**
 	 * The base package(s) to scan for REST controllers. Multiple packages can be comma-separated.
@@ -37,6 +75,18 @@ public class GeneratorProperties {
 	 */
 	@Parameter
 	private String projectType;
+
+	/**
+	 * The schema value for {@link Object} class.
+	 */
+	@Parameter
+	private String schemaForObjectClass;
+
+	/**
+	 * Server properties.
+	 */
+	@Parameter
+	private List<Server> servers;
 
 	/**
 	 * OAuth2 properties.
@@ -64,13 +114,26 @@ public class GeneratorProperties {
 	 */
 	public void applyDefaults(final MavenProject project) {
 		if (Strings.isEmpty(outputFile)) {
-			outputFile = project.getBuild().getDirectory() + "/generated-openapi.yaml";
+			String buildDir = project != null ? project.getBuild().getDirectory() : Default.BUILD_DIRECTORY;
+			outputFile = buildDir + "/" + Default.GENERATED_OPENAPI_FILE_NAME;
 		}
 		if (Strings.isEmpty(classesDir)) {
-			classesDir = project.getBuild().getOutputDirectory();
+			String outputDir = project != null ? project.getBuild().getOutputDirectory() : Default.OUTPUT_DIRECTORY;
+			classesDir = outputDir;
 		}
 		if (Strings.isEmpty(projectType)) {
 			projectType = "spring";
+		}
+		if (Strings.isEmpty(schemaForObjectClass)) {
+			schemaForObjectClass = Default.SCHEMA_FOR_OBJECT_CLASS;
+		} else {
+			schemaForObjectClass = schemaForObjectClass.toLowerCase();
+		}
+		if (Lists.isEmpty(servers)) {
+			servers = new ArrayList<>();
+			Server defaultServer = new Server();
+			defaultServer.applyDefaults(project);
+			servers.add(defaultServer);
 		}
 		if (null == oauth2) {
 			oauth2 = new OAuth2();
@@ -156,6 +219,42 @@ public class GeneratorProperties {
 	 */
 	public void setProjectType(final String projectType) {
 		this.projectType = projectType;
+	}
+
+	/**
+	 * Returns the schema for Object class.
+	 *
+	 * @return the schemaForObjectClass
+	 */
+	public String getSchemaForObjectClass() {
+		return schemaForObjectClass;
+	}
+
+	/**
+	 * Sets the schema for Object class.
+	 *
+	 * @param schemaForObjectClass the schemaForObjectClass to set
+	 */
+	public void setSchemaForObjectClass(String schemaForObjectClass) {
+		this.schemaForObjectClass = schemaForObjectClass;
+	}
+
+	/**
+	 * Returns the servers configurations.
+	 *
+	 * @return the servers
+	 */
+	public List<Server> getServers() {
+		return servers;
+	}
+
+	/**
+	 * Sets the servers configurations.
+	 *
+	 * @param servers the servers to set
+	 */
+	public void setServers(List<Server> servers) {
+		this.servers = servers;
 	}
 
 	/**
@@ -274,6 +373,56 @@ public class GeneratorProperties {
 		 */
 		public void setAuthorizationUrl(final String authorizationUrl) {
 			this.authorizationUrl = authorizationUrl;
+		}
+	}
+
+	/**
+	 * The Servers configurations.
+	 *
+	 * @author Radu Sebastian LAZIN
+	 */
+	public static class Server {
+
+		/**
+		 * The server URL.
+		 */
+		@Parameter
+		private String url;
+
+		/**
+		 * Default constructor.
+		 */
+		public Server() {
+			// empty
+		}
+
+		/**
+		 * Fills in default values for missing fields using MavenProject context.
+		 *
+		 * @param project the Maven project
+		 */
+		public void applyDefaults(final MavenProject project) {
+			if (Strings.isEmpty(url)) {
+				url = "/";
+			}
+		}
+
+		/**
+		 * Returns the server URL.
+		 *
+		 * @return the server URL
+		 */
+		public String getUrl() {
+			return url;
+		}
+
+		/**
+		 * Sets the server URL.
+		 *
+		 * @param url the server URL to set
+		 */
+		public void setUrl(final String url) {
+			this.url = url;
 		}
 	}
 }

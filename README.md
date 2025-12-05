@@ -21,7 +21,7 @@ A Maven plugin for generating OpenAPI documentation offline.
 - Deterministic builds (stable ordering / hashing)
 
 ## Prerequisites
-- Java 21+
+- Java 25+
 - Maven 3.8+
 
 ## Quick Start
@@ -32,7 +32,7 @@ Add the plugin to your project POM:
         <plugin>
             <groupId>com.example</groupId>
             <artifactId>openapi-offline-generator-plugin</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
             <executions>
                 <execution>
                     <id>generate-openapi-offline</id>
@@ -59,11 +59,12 @@ mvn clean verify
 Artifacts will be placed under target/openapi.
 
 ## Configuration Options
-| Field | Description | Default |
-|-------|-------------|---------|
+| Field | Description | Default                                            |
+|-------|-------------|----------------------------------------------------|
 | `packagesToScan` | The base package(s) to scan for REST controllers  (multiple packages can be comma-separated) |
 | `outputFile` | The output file for the generated OpenAPI definition | `${project.build.directory}/generated-openapi.yaml` |
 | `classesDir` | The compiled classes directory (where Spring controllers are located) | `${project.build.outputDirectory}` |
+| `schemaForObjectClass` | The schema to use when the schema implementation is `Object.class` | `object` |
 | `projectType` | The project type (`spring`/`jakarta`) | `spring` | 
 | `oauth2` | OAuth2 options (see below) | |
 | `extensions` | OpenAPI extensions (as map) | |
@@ -114,14 +115,16 @@ Attach generated spec:
         <execution>
             <id>attach-openapi</id>
             <phase>package</phase>
-            <goals><goal>resources</goal></goals>
+            <goals>
+                <goal>resources</goal>
+            </goals>
             <configuration>
                 <outputDirectory>${project.build.directory}/generated-spec</outputDirectory>
                 <resources>
                     <resource>
                         <directory>${project.basedir}/spec</directory>
                         <includes>
-                            <include>openapi.yaml</include>
+                            <include>generated-openapi.yaml</include>
                         </includes>
                     </resource>
                 </resources>
@@ -162,7 +165,7 @@ mvn clean install
 - mvn clean deploy -Prelease
 
 ## License
-Apache License 2.0
+[Apache License 2.0](LICENSE)
 
 ## Security
 Report vulnerabilities via private issue or security email channel. Do not open public issues until disclosure window ends.

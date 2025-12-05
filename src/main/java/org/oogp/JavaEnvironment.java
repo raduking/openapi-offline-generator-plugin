@@ -1,7 +1,12 @@
 package org.oogp;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
+
+import org.apiphany.lang.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility interface for Java version and environment information.
@@ -9,6 +14,30 @@ import java.util.function.Consumer;
  * @author Radu Sebastian LAZIN
  */
 public interface JavaEnvironment {
+
+	/**
+	 * The logger.
+	 */
+	Logger LOGGER = LoggerFactory.getLogger(Classes.class);
+
+	/**
+	 * Detects the project's build output directory containing compiled classes.
+	 * <p>
+	 * This method attempts to locate the directory where compiled class files are stored by reading the
+	 * 'project.build.outputDirectory' system property, which is typically set by build tools like Maven.
+	 *
+	 * @return a Path object representing the project's build output directory
+	 * @throws IllegalStateException if the 'project.build.outputDirectory' system property is not set or is empty,
+	 *     indicating the classes directory could not be detected
+	 */
+	public static Path detectProjectOutputDirectory() {
+		String buildOutput = System.getProperty("project.build.outputDirectory");
+		if (Strings.isNotEmpty(buildOutput)) {
+			return Path.of(buildOutput);
+		}
+		LOGGER.error("Missing 'project.build.outputDirectory' property");
+		throw new IllegalStateException("Could not detect project classes directory");
+	}
 
 	/**
 	 * Provides detailed Java environment information using the provided message consumer.

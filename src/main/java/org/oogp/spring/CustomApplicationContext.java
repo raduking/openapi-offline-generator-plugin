@@ -1,4 +1,4 @@
-package org.oogp;
+package org.oogp.spring;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.morphix.lang.JavaObjects;
+import org.oogp.Classes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -24,6 +25,7 @@ import org.springframework.context.NoSuchMessageException;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
+import org.springframework.lang.Nullable;
 
 /**
  * A custom implementation of Spring's ApplicationContext interface that provides basic bean management and dependency
@@ -64,14 +66,14 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomApplicationContext.class);
 
-	private Map<Class<?>, List<BeanMetadata>> classMap = new HashMap<>();
-	private Map<String, BeanMetadata> nameMap = new HashMap<>();
+	private final Map<Class<?>, List<BeanMetadata>> classMap = new HashMap<>();
+	private final Map<String, BeanMetadata> nameMap = new HashMap<>();
 
-	private Instant startupDate = Instant.now();
+	private final Instant startupDate = Instant.now();
 
 	private final ClassLoader classLoader;
 
-	private CustomBeanFactory customBeanFactory;
+	private final CustomBeanFactory customBeanFactory;
 
 	/**
 	 * Constructs a new CustomApplicationContext with the specified class loader.
@@ -91,8 +93,11 @@ public class CustomApplicationContext implements ApplicationContext {
 	 * @param beanMetadata the metadata of the bean to register
 	 */
 	public void addBean(final BeanMetadata beanMetadata) {
+		if (nameMap.containsKey(beanMetadata.beanName())) {
+			throw new IllegalArgumentException("Bean with name " + beanMetadata.beanName() + " is already registered");
+		}
 		nameMap.put(beanMetadata.beanName(), beanMetadata);
-		classMap.computeIfAbsent(beanMetadata.beanType(), k -> new ArrayList<>()).add(beanMetadata);
+		classMap.computeIfAbsent(beanMetadata.beanType(), _ -> new ArrayList<>()).add(beanMetadata);
 	}
 
 	/**
@@ -142,7 +147,7 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	public String[] getBeanDefinitionNames() {
-		return nameMap.keySet().stream().toArray(String[]::new);
+		return nameMap.keySet().toArray(String[]::new);
 	}
 
 	@Override
@@ -175,7 +180,7 @@ public class CustomApplicationContext implements ApplicationContext {
 				}
 			}
 		}
-		return result.stream().toArray(String[]::new);
+		return result.toArray(String[]::new);
 	}
 
 	@Override
@@ -239,7 +244,7 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	public Object getBean(final String name) throws BeansException {
-		throw new UnsupportedOperationException();
+		return Classes.unsupportedOperation();
 	}
 
 	@Override
@@ -306,6 +311,7 @@ public class CustomApplicationContext implements ApplicationContext {
 	}
 
 	@Override
+	@Nullable
 	public Class<?> getType(final String name) throws NoSuchBeanDefinitionException {
 		BeanMetadata beanMetadata = nameMap.get(name);
 		if (null == beanMetadata) {
@@ -315,6 +321,7 @@ public class CustomApplicationContext implements ApplicationContext {
 	}
 
 	@Override
+	@Nullable
 	public Class<?> getType(final String name, final boolean allowFactoryBeanInit) throws NoSuchBeanDefinitionException {
 		return Classes.unsupportedOperation();
 	}
@@ -341,7 +348,7 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	public String getMessage(final String code, final Object[] args, final Locale locale) throws NoSuchMessageException {
-		LOGGER.info("code: {}, args: {}, locale: {}", code, args, locale);
+		LOGGER.debug("code: {}, args: {}, locale: {}", code, args, locale);
 		return Classes.unsupportedOperation();
 	}
 
