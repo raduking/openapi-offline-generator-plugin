@@ -10,7 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.oogp.Classes;
+import org.morphix.reflection.Classes;
+import org.oogp.Conversions;
 import org.oogp.GeneratorProperties;
 import org.oogp.JavaEnvironment;
 import org.slf4j.Logger;
@@ -92,7 +93,7 @@ public class OpenApiSpecJakartaGenerator {
 			System.exit(1);
 		}
 		try {
-			GeneratorProperties properties = Classes.convertFromStringArray(args, GeneratorProperties.class);
+			GeneratorProperties properties = Conversions.convertFromStringArray(args, GeneratorProperties.class);
 			generate(properties);
 		} catch (Exception e) {
 			LOGGER.error("Error generating Open API", e);
@@ -119,7 +120,7 @@ public class OpenApiSpecJakartaGenerator {
 		Set<Class<?>> controllers = new HashSet<>();
 		for (String pkg : packages) {
 			LOGGER.info("Scanning package: {}", pkg);
-			Set<Class<?>> classes = Classes.findInPackage(pkg, projectClassesDir);
+			Set<Class<?>> classes = Classes.Scan.findInPackage(pkg, projectClassesDir);
 			for (Class<?> cls : classes) {
 				if (null != cls.getAnnotation(RestController.class) || null != cls.getAnnotation(RequestMapping.class)) {
 					controllers.add(cls);

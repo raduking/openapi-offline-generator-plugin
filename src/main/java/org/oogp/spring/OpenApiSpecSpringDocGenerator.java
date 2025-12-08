@@ -19,9 +19,10 @@ import java.util.stream.Collectors;
 import org.apiphany.json.JsonBuilder;
 import org.apiphany.lang.collections.Lists;
 import org.apiphany.lang.collections.Maps;
+import org.morphix.reflection.Classes;
 import org.morphix.reflection.InstanceCreator;
 import org.morphix.reflection.Methods;
-import org.oogp.Classes;
+import org.oogp.Conversions;
 import org.oogp.GeneratorProperties;
 import org.oogp.JavaEnvironment;
 import org.oogp.SwaggerAnnotations;
@@ -153,7 +154,7 @@ public class OpenApiSpecSpringDocGenerator {
 			System.exit(1);
 		}
 		try {
-			GeneratorProperties properties = Classes.convertFromStringArray(args, GeneratorProperties.class);
+			GeneratorProperties properties = Conversions.convertFromStringArray(args, GeneratorProperties.class);
 			properties.applyDefaults(null, null);
 			generate(properties);
 		} catch (Exception e) {
@@ -181,7 +182,8 @@ public class OpenApiSpecSpringDocGenerator {
 		Path projectClassesDir = JavaEnvironment.detectProjectOutputDirectory();
 		LOGGER.info("Using classes directory: {}", projectClassesDir.toAbsolutePath());
 
-		Set<Class<?>> requestHandlerClasses = Classes.findWithAnyAnnotation(packages, projectClassesDir, REQUEST_HANDLER_ANNOTATIONS);
+		Set<Class<?>> requestHandlerClasses = Classes.Scan.findWithAnyAnnotation(packages, projectClassesDir, REQUEST_HANDLER_ANNOTATIONS,
+				LOGGER::info);
 		ClassLoader projectClassLoader = Thread.currentThread().getContextClassLoader();
 		CustomApplicationContext context = new CustomApplicationContext(projectClassLoader);
 		for (Class<?> requestHandlerClass : requestHandlerClasses) {
@@ -229,7 +231,7 @@ public class OpenApiSpecSpringDocGenerator {
 	}
 
 	private static RequestMappingHandlerMapping createHandlerMapping(final Object controller, final ApplicationContext context,
-			GeneratorProperties properties) {
+			final GeneratorProperties properties) {
 		RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping();
 		handlerMapping.setApplicationContext(context);
 		handlerMapping.afterPropertiesSet();
@@ -238,7 +240,7 @@ public class OpenApiSpecSpringDocGenerator {
 	}
 
 	private static void registerControllerMethods(final RequestMappingHandlerMapping handlerMapping, final Object controller,
-			String schemaForObjectClass) {
+			final String schemaForObjectClass) {
 		for (Method method : Methods.Complete.getAllDeclaredInHierarchy(controller.getClass(), Classes.mutableSetOf(Object.class))) {
 			RequestMapping methodMapping = method.getAnnotation(RequestMapping.class);
 			SwaggerAnnotations.overrideAll(method, schemaForObjectClass);

@@ -113,7 +113,7 @@ public class GeneratorProperties {
 	 * @param projectBuildDirectory the project build directory
 	 * @param projectBuildOutputDirectory the project build output directory
 	 */
-	public void applyDefaults(String projectBuildDirectory, String projectBuildOutputDirectory) {
+	public void applyDefaults(final String projectBuildDirectory, final String projectBuildOutputDirectory) {
 		if (Strings.isEmpty(outputFile)) {
 			String buildDir = projectBuildDirectory != null ? projectBuildDirectory : Default.BUILD_DIRECTORY;
 			outputFile = buildDir + "/" + Default.GENERATED_OPENAPI_FILE_NAME;
@@ -235,7 +235,7 @@ public class GeneratorProperties {
 	 *
 	 * @param schemaForObjectClass the schemaForObjectClass to set
 	 */
-	public void setSchemaForObjectClass(String schemaForObjectClass) {
+	public void setSchemaForObjectClass(final String schemaForObjectClass) {
 		this.schemaForObjectClass = schemaForObjectClass;
 	}
 
@@ -253,7 +253,7 @@ public class GeneratorProperties {
 	 *
 	 * @param servers the servers to set
 	 */
-	public void setServers(List<Server> servers) {
+	public void setServers(final List<Server> servers) {
 		this.servers = servers;
 	}
 

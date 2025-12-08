@@ -5,6 +5,7 @@ import org.morphix.reflection.Constructors;
 import org.oogp.jakarta.OpenApiSpecJakartaGenerator;
 import org.oogp.spring.OpenApiSpecSpringDocGenerator;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -21,7 +22,7 @@ public class OpenApiGenerator {
 	 * @param args the command line arguments
 	 * @throws Exception in case of errors
 	 */
-	static void main(String[] args) throws Exception {
+	static void main(final String[] args) throws Exception {
 		if (args.length != 1) {
 			System.err.println("Expected path to properties JSON");
 			System.exit(2);
@@ -32,6 +33,16 @@ public class OpenApiGenerator {
 		GeneratorProperties properties = JsonBuilder.fromJson(json, GeneratorProperties.class);
 		properties.applyDefaults(null, null);
 
+		generate(properties);
+	}
+
+	/**
+	 * Generates the OpenAPI specification based on the given properties.
+	 *
+	 * @param properties generator properties
+	 * @throws IOException in case of I/O errors
+	 */
+	public static void generate(final GeneratorProperties properties) throws IOException {
 		switch (ProjectType.fromString(properties.getProjectType())) {
 			case JAKARTA -> OpenApiSpecJakartaGenerator.generate(properties);
 			case SPRING -> OpenApiSpecSpringDocGenerator.generate(properties);

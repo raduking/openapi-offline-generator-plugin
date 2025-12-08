@@ -19,7 +19,7 @@ public record UserCacheInfo(String userId, String geoHash, List<String> info) {
 
 		private String geoHash;
 
-		private List<String> info = new ArrayList<>();
+		private final List<String> info = new ArrayList<>();
 
 		private Builder() {
 			// empty

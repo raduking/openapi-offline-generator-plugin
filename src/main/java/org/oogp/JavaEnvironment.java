@@ -19,7 +19,7 @@ public interface JavaEnvironment {
 	/**
 	 * The logger.
 	 */
-	Logger LOGGER = LoggerFactory.getLogger(Classes.class);
+	Logger LOGGER = LoggerFactory.getLogger(JavaEnvironment.class);
 
 	/**
 	 * Detects the project's build output directory containing compiled classes.
@@ -31,7 +31,7 @@ public interface JavaEnvironment {
 	 * @throws IllegalStateException if the 'project.build.outputDirectory' system property is not set or is empty,
 	 *     indicating the classes directory could not be detected
 	 */
-	public static Path detectProjectOutputDirectory() {
+	static Path detectProjectOutputDirectory() {
 		String buildOutput = System.getProperty("project.build.outputDirectory");
 		if (Strings.isNotEmpty(buildOutput)) {
 			return Path.of(buildOutput);
