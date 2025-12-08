@@ -4,6 +4,7 @@
 
 - Upgraded `apiphany` to `1.0.18`.
 - Removed unused methods from `SwaggerAnnotations` class.
+- Added `Errors` util class.
 
 ---
 
