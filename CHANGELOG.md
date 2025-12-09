@@ -4,7 +4,8 @@
 
 - Upgraded `apiphany` to `1.0.18`.
 - Removed unused methods from `SwaggerAnnotations` class.
-- Added `Errors` util class.
+- Added `Errors` utility class with error related methods.
+- Added `Conversions` utility class with conversions related.
 
 ---
 
