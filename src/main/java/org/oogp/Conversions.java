@@ -10,10 +10,7 @@ import org.morphix.reflection.Fields;
 import org.morphix.reflection.InstanceCreator;
 
 /**
- * Utility class for class-related operations including class discovery, loading, and conversion.
- * <p>
- * The class uses the current thread's context class loader for class loading operations and relies on the
- * 'project.build.outputDirectory' system property to locate compiled classes.
+ * Utility class for conversion operations.
  *
  * @author Radu Sebastian LAZIN
  */
