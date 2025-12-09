@@ -19,8 +19,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apiphany.json.JsonBuilder;
-import org.oogp.jakarta.OpenApiSpecJakartaGenerator;
-import org.oogp.spring.OpenApiSpecSpringDocGenerator;
 
 /**
  * Mojo that generates an OpenAPI YAML file from the compiled Spring controllers.
@@ -104,12 +102,7 @@ public class OpenApiMojo extends AbstractMojo {
 		try (URLClassLoader projectClassLoader = buildProjectClassLoader()) {
 			System.setProperty("project.build.outputDirectory", project.getBuild().getOutputDirectory());
 			Thread.currentThread().setContextClassLoader(projectClassLoader);
-
-			switch (ProjectType.fromString(properties.getProjectType())) {
-				case JAKARTA -> OpenApiSpecJakartaGenerator.generate(properties);
-				case SPRING -> OpenApiSpecSpringDocGenerator.generate(properties);
-				default -> throw new UnsupportedOperationException("Unknown project type: " + properties.getProjectType());
-			}
+			OpenApiGenerator.generate(properties);
 		} catch (Exception e) {
 			getLog().info("Error generating OpenAPI spec: " + e.getMessage());
 			throw new MojoExecutionException("Failed to generate OpenAPI spec", e);
@@ -138,16 +131,7 @@ public class OpenApiMojo extends AbstractMojo {
 			}
 			String classpath = String.join(File.pathSeparator, cp);
 
-			List<String> cmd = new ArrayList<>();
-			cmd.add(JavaEnvironment.getJavaExecutablePath());
-			cmd.add("--add-opens=java.base/java.lang.reflect=ALL-UNNAMED");
-			cmd.add("--add-opens=java.base/sun.reflect.annotation=ALL-UNNAMED");
-			cmd.add("-cp");
-			cmd.add(classpath);
-			cmd.add("-Dproject.build.outputDirectory=" + project.getBuild().getOutputDirectory());
-			cmd.add("-D" + JsonBuilder.Property.INDENT_OUTPUT + "=true");
-			cmd.add(OpenApiGenerator.class.getName());
-			cmd.add(tempPropertiesFile.toAbsolutePath().toString());
+			List<String> cmd = getCmd(classpath, tempPropertiesFile);
 
 			getLog().info("Forking JVM to generate OpenAPI spec...");
 			ProcessBuilder processBuilder = new ProcessBuilder(cmd)
@@ -174,6 +158,27 @@ public class OpenApiMojo extends AbstractMojo {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Builds the command to run the forked JVM process.
+	 *
+	 * @param classpath the classpath
+	 * @param tempPropertiesFile the temporary properties file
+	 * @return the command
+	 */
+	private List<String> getCmd(final String classpath, final Path tempPropertiesFile) {
+		List<String> cmd = new ArrayList<>();
+		cmd.add(JavaEnvironment.getJavaExecutablePath());
+		cmd.add("--add-opens=java.base/java.lang.reflect=ALL-UNNAMED");
+		cmd.add("--add-opens=java.base/sun.reflect.annotation=ALL-UNNAMED");
+		cmd.add("-cp");
+		cmd.add(classpath);
+		cmd.add("-Dproject.build.outputDirectory=" + project.getBuild().getOutputDirectory());
+		cmd.add("-D" + JsonBuilder.Property.INDENT_OUTPUT + "=true");
+		cmd.add(OpenApiGenerator.class.getName());
+		cmd.add(tempPropertiesFile.toAbsolutePath().toString());
+		return cmd;
 	}
 
 	/**

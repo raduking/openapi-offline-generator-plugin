@@ -1,12 +1,24 @@
 ## Release Notes
 
+`1.0.4`
+
+- Upgraded `apiphany` to `1.0.18`.
+- Removed unused methods from `SwaggerAnnotations` class.
+- Added `Errors` utility class with error related methods.
+- Added `Conversions` utility class with conversions related.
+
+---
+
 `1.0.3`
+
+- Added forked runner by default so that projects don't need to add reflection configuration for surefire / failsafe plugins.
+- Upgraded `apiphany` to `1.0.17`.
 
 ---
 
 `1.0.2`
 
-- Added servers configuration.
+- Added `servers` configuration.
 - Upgraded to Java 25.
 - Upgraded `jacoco-maven-plugin` to `0.8.14`.
 - Upgraded `apiphany` to `1.0.16`.

@@ -1,6 +1,5 @@
 package org.oogp.spring;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -11,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.morphix.lang.JavaObjects;
-import org.oogp.Classes;
+import org.oogp.Errors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -132,7 +131,7 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	public Environment getEnvironment() {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
@@ -152,22 +151,22 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	public <T> ObjectProvider<T> getBeanProvider(final Class<T> requiredType, final boolean allowEagerInit) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public <T> ObjectProvider<T> getBeanProvider(final ResolvableType requiredType, final boolean allowEagerInit) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public String[] getBeanNamesForType(final ResolvableType type) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public String[] getBeanNamesForType(final ResolvableType type, final boolean includeNonSingletons, final boolean allowEagerInit) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
@@ -185,7 +184,7 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	public String[] getBeanNamesForType(final Class<?> type, final boolean includeNonSingletons, final boolean allowEagerInit) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
@@ -209,7 +208,7 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	public String[] getBeanNamesForAnnotation(final Class<? extends Annotation> annotationType) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
@@ -226,25 +225,25 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	public <A extends Annotation> A findAnnotationOnBean(final String beanName, final Class<A> annotationType) throws NoSuchBeanDefinitionException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public <A extends Annotation> A findAnnotationOnBean(final String beanName, final Class<A> annotationType, final boolean allowFactoryBeanInit)
 			throws NoSuchBeanDefinitionException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public <A extends Annotation> Set<A> findAllAnnotationsOnBean(final String beanName, final Class<A> annotationType,
 			final boolean allowFactoryBeanInit)
 			throws NoSuchBeanDefinitionException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public Object getBean(final String name) throws BeansException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
@@ -262,27 +261,27 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	public Object getBean(final String name, final Object... args) throws BeansException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public <T> T getBean(final Class<T> requiredType) throws BeansException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public <T> T getBean(final Class<T> requiredType, final Object... args) throws BeansException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public <T> ObjectProvider<T> getBeanProvider(final Class<T> requiredType) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public <T> ObjectProvider<T> getBeanProvider(final ResolvableType requiredType) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
@@ -292,22 +291,22 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	public boolean isSingleton(final String name) throws NoSuchBeanDefinitionException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public boolean isPrototype(final String name) throws NoSuchBeanDefinitionException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public boolean isTypeMatch(final String name, final ResolvableType typeToMatch) throws NoSuchBeanDefinitionException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public boolean isTypeMatch(final String name, final Class<?> typeToMatch) throws NoSuchBeanDefinitionException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
@@ -323,12 +322,12 @@ public class CustomApplicationContext implements ApplicationContext {
 	@Override
 	@Nullable
 	public Class<?> getType(final String name, final boolean allowFactoryBeanInit) throws NoSuchBeanDefinitionException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public String[] getAliases(final String name) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
@@ -338,38 +337,38 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	public boolean containsLocalBean(final String name) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public String getMessage(final String code, final Object[] args, final String defaultMessage, final Locale locale) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public String getMessage(final String code, final Object[] args, final Locale locale) throws NoSuchMessageException {
 		LOGGER.debug("code: {}, args: {}, locale: {}", code, args, locale);
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public String getMessage(final MessageSourceResolvable resolvable, final Locale locale) throws NoSuchMessageException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void publishEvent(final Object event) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
-	public Resource[] getResources(final String locationPattern) throws IOException {
-		return Classes.unsupportedOperation();
+	public Resource[] getResources(final String locationPattern) {
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public Resource getResource(final String location) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
@@ -379,7 +378,7 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	public String getId() {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override

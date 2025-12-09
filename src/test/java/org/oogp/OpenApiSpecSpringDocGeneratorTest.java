@@ -30,15 +30,7 @@ class OpenApiSpecSpringDocGeneratorTest {
 	private static final String OUTPUT_FILE_NAME_WITH_MAIN = "open-api-with-main.yaml";
 	private static final String OUTPUT_FILE_NAME_FOR_OBJECT = "object.yaml";
 
-	@Test
-	void shouldBuildOpenApiFileWithGenerate() throws IOException {
-		String currentDirectory = Paths.get("").toAbsolutePath().toString();
-		System.setProperty("project.build.outputDirectory", currentDirectory + "/target/test-classes");
-
-		String fileName = currentDirectory + "/src/test/resources/" + OUTPUT_FILE_NAME_WITH_GENERATE;
-		Path path = Paths.get(fileName);
-		Files.deleteIfExists(path);
-
+	private static GeneratorProperties getGeneratorProperties(final String fileName) {
 		GeneratorProperties generatorProperties = new GeneratorProperties();
 		generatorProperties.setPackagesToScan("org.oogp.controller");
 		generatorProperties.setOutputFile(fileName);
@@ -48,6 +40,19 @@ class OpenApiSpecSpringDocGeneratorTest {
 		oAuth2.setAuthorizationUrl("http://automatically/replaced/on/runtime/by/unknown");
 		generatorProperties.setOauth2(oAuth2);
 		generatorProperties.setExtensions(Map.of("x-internal-hostname", "http://my-service-name:8080"));
+		return generatorProperties;
+	}
+
+	@Test
+	void shouldBuildOpenApiFileWithGenerate() throws IOException {
+		String currentDirectory = Paths.get("").toAbsolutePath().toString();
+		System.setProperty("project.build.outputDirectory", currentDirectory + "/target/test-classes");
+
+		String fileName = currentDirectory + "/src/test/resources/" + OUTPUT_FILE_NAME_WITH_GENERATE;
+		Path path = Paths.get(fileName);
+		Files.deleteIfExists(path);
+
+		GeneratorProperties generatorProperties = getGeneratorProperties(fileName);
 		OpenApiSpecSpringDocGenerator.generate(generatorProperties);
 
 		boolean exists = Files.exists(path);
@@ -64,15 +69,7 @@ class OpenApiSpecSpringDocGeneratorTest {
 		Path path = Paths.get(fileName);
 		Files.deleteIfExists(path);
 
-		GeneratorProperties generatorProperties = new GeneratorProperties();
-		generatorProperties.setPackagesToScan("org.oogp.controller");
-		generatorProperties.setOutputFile(fileName);
-		generatorProperties.setSchemaForObjectClass("object");
-		GeneratorProperties.OAuth2 oAuth2 = new GeneratorProperties.OAuth2();
-		oAuth2.setEnabled(true);
-		oAuth2.setAuthorizationUrl("http://automatically/replaced/on/runtime/by/unknown");
-		generatorProperties.setOauth2(oAuth2);
-		generatorProperties.setExtensions(Map.of("x-internal-hostname", "http://my-service-name:8080"));
+		GeneratorProperties generatorProperties = getGeneratorProperties(fileName);
 		OpenApiSpecSpringDocGenerator.generate(generatorProperties);
 
 		boolean exists = Files.exists(path);

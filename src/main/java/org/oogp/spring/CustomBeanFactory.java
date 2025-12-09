@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
-import org.oogp.Classes;
+import org.oogp.Errors;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.beans.PropertyEditorRegistry;
@@ -115,12 +115,12 @@ public class CustomBeanFactory implements AutowireCapableBeanFactory, Configurab
 
 	@Override
 	public <T> ObjectProvider<T> getBeanProvider(final Class<T> requiredType) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public <T> ObjectProvider<T> getBeanProvider(final ResolvableType requiredType) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
@@ -167,78 +167,78 @@ public class CustomBeanFactory implements AutowireCapableBeanFactory, Configurab
 
 	@Override
 	public <T> T createBean(final Class<T> beanClass) throws BeansException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void autowireBean(final Object existingBean) throws BeansException {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public Object configureBean(final Object existingBean, final String beanName) throws BeansException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public Object createBean(final Class<?> beanClass, final int autowireMode, final boolean dependencyCheck) throws BeansException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public Object autowire(final Class<?> beanClass, final int autowireMode, final boolean dependencyCheck) throws BeansException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void autowireBeanProperties(final Object existingBean, final int autowireMode, final boolean dependencyCheck) throws BeansException {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void applyBeanPropertyValues(final Object existingBean, final String beanName) throws BeansException {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public Object initializeBean(final Object existingBean, final String beanName) throws BeansException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public Object applyBeanPostProcessorsBeforeInitialization(final Object existingBean, final String beanName) throws BeansException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public Object applyBeanPostProcessorsAfterInitialization(final Object existingBean, final String beanName) throws BeansException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void destroyBean(final Object existingBean) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public <T> NamedBeanHolder<T> resolveNamedBean(final Class<T> requiredType) throws BeansException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public Object resolveBeanByName(final String name, final DependencyDescriptor descriptor) throws BeansException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public Object resolveDependency(final DependencyDescriptor descriptor, final String requestingBeanName) throws BeansException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public Object resolveDependency(final DependencyDescriptor descriptor, final String requestingBeanName, final Set<String> autowiredBeanNames,
 			final TypeConverter typeConverter) throws BeansException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
@@ -249,82 +249,82 @@ public class CustomBeanFactory implements AutowireCapableBeanFactory, Configurab
 
 	@Override
 	public boolean containsLocalBean(final String name) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void registerSingleton(final String beanName, final Object singletonObject) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void addSingletonCallback(final String beanName, final Consumer<Object> singletonConsumer) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public Object getSingleton(final String beanName) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public boolean containsSingleton(final String beanName) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public String[] getSingletonNames() {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public int getSingletonCount() {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public Object getSingletonMutex() {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void setParentBeanFactory(final BeanFactory parentBeanFactory) throws IllegalStateException {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void setBeanClassLoader(final ClassLoader beanClassLoader) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public ClassLoader getBeanClassLoader() {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void setTempClassLoader(final ClassLoader tempClassLoader) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public ClassLoader getTempClassLoader() {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void setCacheBeanMetadata(final boolean cacheBeanMetadata) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public boolean isCacheBeanMetadata() {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void setBeanExpressionResolver(final BeanExpressionResolver resolver) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
@@ -335,57 +335,57 @@ public class CustomBeanFactory implements AutowireCapableBeanFactory, Configurab
 
 	@Override
 	public void setBootstrapExecutor(final Executor executor) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public Executor getBootstrapExecutor() {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void setConversionService(final ConversionService conversionService) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public ConversionService getConversionService() {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void addPropertyEditorRegistrar(final PropertyEditorRegistrar registrar) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void registerCustomEditor(final Class<?> requiredType, final Class<? extends PropertyEditor> propertyEditorClass) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void copyRegisteredEditorsTo(final PropertyEditorRegistry registry) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void setTypeConverter(final TypeConverter typeConverter) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public TypeConverter getTypeConverter() {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void addEmbeddedValueResolver(final StringValueResolver valueResolver) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public boolean hasEmbeddedValueResolver() {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
@@ -397,101 +397,101 @@ public class CustomBeanFactory implements AutowireCapableBeanFactory, Configurab
 
 	@Override
 	public void addBeanPostProcessor(final BeanPostProcessor beanPostProcessor) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public int getBeanPostProcessorCount() {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void registerScope(final String scopeName, final Scope scope) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public String[] getRegisteredScopeNames() {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public Scope getRegisteredScope(final String scopeName) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void setApplicationStartup(final ApplicationStartup applicationStartup) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public ApplicationStartup getApplicationStartup() {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void copyConfigurationFrom(final ConfigurableBeanFactory otherFactory) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void registerAlias(final String beanName, final String alias) throws BeanDefinitionStoreException {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void resolveAliases(final StringValueResolver valueResolver) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public BeanDefinition getMergedBeanDefinition(final String beanName) throws NoSuchBeanDefinitionException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public boolean isFactoryBean(final String name) throws NoSuchBeanDefinitionException {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void setCurrentlyInCreation(final String beanName, final boolean inCreation) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public boolean isCurrentlyInCreation(final String beanName) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void registerDependentBean(final String beanName, final String dependentBeanName) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public String[] getDependentBeans(final String beanName) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public String[] getDependenciesForBean(final String beanName) {
-		return Classes.unsupportedOperation();
+		return Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void destroyBean(final String beanName, final Object beanInstance) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void destroyScopedBean(final String beanName) {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 
 	@Override
 	public void destroySingletons() {
-		Classes.unsupportedOperation();
+		Errors.unsupportedOperation();
 	}
 }
