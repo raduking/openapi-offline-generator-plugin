@@ -27,7 +27,6 @@ public class OpenApiGenerator {
 			System.err.println("Expected path to properties JSON");
 			System.exit(2);
 		}
-
 		try {
 			Path propertiesPath = Path.of(args[0]);
 			String json = Files.readString(propertiesPath);
@@ -38,6 +37,7 @@ public class OpenApiGenerator {
 			generate(properties);
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.exit(3);
 		}
 	}
 
