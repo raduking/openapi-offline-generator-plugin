@@ -1,13 +1,13 @@
 package org.oogp;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.apiphany.json.JsonBuilder;
 import org.morphix.reflection.Constructors;
 import org.oogp.jakarta.OpenApiSpecJakartaGenerator;
 import org.oogp.spring.OpenApiSpecSpringDocGenerator;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 /**
  * Main class for OpenAPI generation used in the CLI mode.
@@ -22,18 +22,23 @@ public class OpenApiGenerator {
 	 * @param args the command line arguments
 	 * @throws Exception in case of errors
 	 */
-	static void main(final String[] args) throws Exception {
+	static void main(final String[] args) {
 		if (args.length != 1) {
 			System.err.println("Expected path to properties JSON");
 			System.exit(2);
 		}
 
-		Path propertiesPath = Path.of(args[0]);
-		String json = Files.readString(propertiesPath);
-		GeneratorProperties properties = JsonBuilder.fromJson(json, GeneratorProperties.class);
-		properties.applyDefaults(null, null);
+		try {
+			Path propertiesPath = Path.of(args[0]);
+			String json = Files.readString(propertiesPath);
 
-		generate(properties);
+			GeneratorProperties properties = JsonBuilder.fromJson(json, GeneratorProperties.class);
+			properties.applyDefaults(null, null);
+
+			generate(properties);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -46,7 +51,7 @@ public class OpenApiGenerator {
 		switch (ProjectType.fromString(properties.getProjectType())) {
 			case JAKARTA -> OpenApiSpecJakartaGenerator.generate(properties);
 			case SPRING -> OpenApiSpecSpringDocGenerator.generate(properties);
-			default -> throw new RuntimeException("Unknown project type: " + properties.getProjectType());
+			default -> throw new GeneratorException("Unknown project type: " + properties.getProjectType());
 		}
 	}
 
