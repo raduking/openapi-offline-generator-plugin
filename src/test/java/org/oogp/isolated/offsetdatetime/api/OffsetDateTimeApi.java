@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "Object", description = "the data")
+@Tag(name = "ISO-8601", description = "the data")
 @RequestMapping("/api/test/offsetdatetime/")
 public interface OffsetDateTimeApi {
 
@@ -37,7 +37,7 @@ public interface OffsetDateTimeApi {
 
 	@Operation(
 		operationId = "getObjectWithOffsetDateTime",
-		tags = { "Object" },
+		tags = { "ISO-8601" },
 		parameters = {
 				@Parameter(
 					name = "dateTime",
@@ -63,7 +63,7 @@ public interface OffsetDateTimeApi {
 
 	@Operation(
 		operationId = "getObjectWithStringTime",
-		tags = { "Object" },
+		tags = { "ISO-8601" },
 		parameters = {
 				@Parameter(
 					name = "dateTime",

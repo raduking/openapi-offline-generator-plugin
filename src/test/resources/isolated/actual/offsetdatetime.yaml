@@ -4,13 +4,13 @@ info:
   version: v0
 servers: []
 tags:
-- name: Object
+- name: ISO-8601
   description: the data
 paths:
   /api/test/offsetdatetime/with-stringtime:
     get:
       tags:
-      - Object
+      - ISO-8601
       operationId: getObjectWithStringTime
       parameters:
       - name: dateTime
@@ -31,7 +31,7 @@ paths:
   /api/test/offsetdatetime/with-offsetdatetime:
     get:
       tags:
-      - Object
+      - ISO-8601
       operationId: getObjectWithOffsetDateTime
       parameters:
       - name: dateTime
