@@ -1,6 +1,6 @@
-package org.oogp.offsetdatetime.controller;
+package org.oogp.isolated.offsetdatetime.controller;
 
-import org.oogp.offsetdatetime.api.OffsetDateTimeApi;
+import org.oogp.isolated.offsetdatetime.api.OffsetDateTimeApi;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 

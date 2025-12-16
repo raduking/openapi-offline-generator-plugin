@@ -1,4 +1,4 @@
-package org.oogp.offsetdatetime.api;
+package org.oogp.isolated.offsetdatetime.api;
 
 import java.time.OffsetDateTime;
 

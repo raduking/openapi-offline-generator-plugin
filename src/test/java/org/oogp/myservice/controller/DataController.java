@@ -1,8 +1,8 @@
-package org.oogp.controller;
+package org.oogp.myservice.controller;
 
 import java.util.List;
 
-import org.oogp.api.DataApi;
+import org.oogp.myservice.api.DataApi;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
