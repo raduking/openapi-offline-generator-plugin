@@ -82,6 +82,7 @@
 		
 		<!-- Testing command line options -->
 		<oogpArgLine>
+			-XX:+EnableDynamicAgentLoading
 			--add-opens java.base/java.lang.reflect=ALL-UNNAMED
 			--add-opens java.base/sun.reflect.annotation=ALL-UNNAMED
 		</oogpArgLine>
@@ -203,6 +204,11 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
