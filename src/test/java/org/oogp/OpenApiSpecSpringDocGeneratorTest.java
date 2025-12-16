@@ -29,6 +29,7 @@ class OpenApiSpecSpringDocGeneratorTest {
 	private static final String OUTPUT_FILE_NAME_WITH_GENERATE = "open-api-with-generate.yaml";
 	private static final String OUTPUT_FILE_NAME_WITH_MAIN = "open-api-with-main.yaml";
 	private static final String OUTPUT_FILE_NAME_FOR_OBJECT = "object.yaml";
+	private static final String OUTPUT_FILE_NAME_FOR_OFFSET_DATE_TIME = "offsetdatetime.yaml";
 
 	private static GeneratorProperties getGeneratorProperties(final String fileName) {
 		GeneratorProperties generatorProperties = new GeneratorProperties();
@@ -125,4 +126,29 @@ class OpenApiSpecSpringDocGeneratorTest {
 		assertThat(actualContent, equalTo(expectedContent));
 	}
 
+	@Test
+	void shouldBuildOpenApiFileForObjectTypeAndOffsetDateTime() throws IOException {
+		String currentDirectory = Paths.get("").toAbsolutePath().toString();
+		System.setProperty("project.build.outputDirectory", currentDirectory + "/target/test-classes");
+
+		String fileName = currentDirectory + "/src/test/resources/isolated/" + OUTPUT_FILE_NAME_FOR_OFFSET_DATE_TIME;
+		Path path = Paths.get(fileName);
+		Files.deleteIfExists(path);
+
+		GeneratorProperties generatorProperties = new GeneratorProperties();
+		generatorProperties.setPackagesToScan("org.oogp.offsetdatetime.controller");
+		generatorProperties.setOutputFile(fileName);
+		generatorProperties.setSchemaForObjectClass("object");
+		OpenApiSpecSpringDocGenerator.generate(generatorProperties);
+
+		boolean exists = Files.exists(path);
+
+		assertThat(exists, equalTo(true));
+
+		String expectedFileName = currentDirectory + "/src/test/resources/expected/isolated/" + OUTPUT_FILE_NAME_FOR_OFFSET_DATE_TIME;
+		String expectedContent = Files.readString(Paths.get(expectedFileName));
+		String actualContent = Files.readString(path);
+
+		assertThat(actualContent, equalTo(expectedContent));
+	}
 }

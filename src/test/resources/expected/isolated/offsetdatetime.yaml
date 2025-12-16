@@ -1,0 +1,32 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers: []
+tags:
+- name: Object
+  description: the data
+paths:
+  /api/test/offsetdatetime/string:
+    get:
+      tags:
+      - Object
+      operationId: getStringAsObject
+      parameters:
+      - name: dateTime
+        in: query
+        description: Input date time
+        required: true
+        schema:
+          type: string
+          format: date-time
+          example: 2019-12-19T23:59:00+01:00
+          pattern: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[+-]\\d{2}:\\d{2}$"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+components: {}
