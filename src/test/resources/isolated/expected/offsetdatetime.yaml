@@ -7,11 +7,32 @@ tags:
 - name: Object
   description: the data
 paths:
-  /api/test/offsetdatetime/string:
+  /api/test/offsetdatetime/with-stringtime:
     get:
       tags:
       - Object
-      operationId: getStringAsObject
+      operationId: getObjectWithStringTime
+      parameters:
+      - name: dateTime
+        in: query
+        description: Input date time
+        required: true
+        schema:
+          type: string
+          example: 2019-12-19T23:59:00+01:00
+          pattern: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2})?([+-]\\d{2}:\\d{2}|Z)$"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /api/test/offsetdatetime/with-offsetdatetime:
+    get:
+      tags:
+      - Object
+      operationId: getObjectWithOffsetDateTime
       parameters:
       - name: dateTime
         in: query
@@ -21,7 +42,7 @@ paths:
           type: string
           format: date-time
           example: 2019-12-19T23:59:00+01:00
-          pattern: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[+-]\\d{2}:\\d{2}$"
+          pattern: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2})?([+-]\\d{2}:\\d{2}|Z)$"
       responses:
         "200":
           description: OK

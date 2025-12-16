@@ -20,13 +20,33 @@ public class OffsetDateTimeController implements OffsetDateTimeApi {
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
-	public ResponseEntity<Object> getStringAsObject(final OffsetDateTime dateTime) {
+	public ResponseEntity<Object> getObjectWithOffsetDateTime(final OffsetDateTime dateTime) {
 		LOGGER.info("Received OffsetDateTime: {}", dateTime);
 
+		ObjectNode response = createResponseNode(dateTime);
+
+		return ResponseEntity.ok(response);
+	}
+
+	@Override
+	public ResponseEntity<Object> getObjectWithStringTime(final String dateTime) {
+		LOGGER.info("Received dateTime string: {}", dateTime);
+		OffsetDateTime parsedDateTime = OffsetDateTime.parse(dateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+
+		ObjectNode response = createResponseNode(parsedDateTime);
+
+		return ResponseEntity.ok(response);
+	}
+
+	/**
+	 * Returns a JSON object node with the details of the OffsetDateTime for testing purposes.
+	 *
+	 * @param dateTime the OffsetDateTime to extract details from
+	 * @return an ObjectNode containing the dateTime details
+	 */
+	private ObjectNode createResponseNode(final OffsetDateTime dateTime) {
 		// IMPORTANT: Format the OffsetDateTime back to ISO 8601 string for consistent output not dependent on toString()
 		String formattedDateTime = dateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-
-		// return the parsed dateTime for testing
 		ObjectNode response = objectMapper.createObjectNode();
 		response.put("dateTime", formattedDateTime);
 		response.put("year", dateTime.getYear());
@@ -36,8 +56,6 @@ public class OffsetDateTimeController implements OffsetDateTimeApi {
 		response.put("minute", dateTime.getMinute());
 		response.put("second", dateTime.getSecond());
 		response.put("offset", dateTime.getOffset().toString());
-
-		return ResponseEntity.ok(response);
+		return response;
 	}
-
 }
