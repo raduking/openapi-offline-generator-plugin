@@ -17,7 +17,7 @@
 
 	<groupId>io.github.raduking</groupId>
 	<artifactId>openapi-offline-generator-plugin</artifactId>
-	<version>1.0.4</version>
+	<version>1.0.5</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -51,12 +51,24 @@
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
-		<maven.plugin.plugin.version>3.15.2</maven.plugin.plugin.version>
+		<!-- Other dependencies versions -->
+		<maven.plugin.api.version>3.9.11</maven.plugin.api.version>
+		<maven.core.version>3.9.11</maven.core.version>
+		
+		<swagger.jaxrs2.jakarta.version>2.2.41</swagger.jaxrs2.jakarta.version>
+		<springdoc.openapi.starter.webmvc.api.version>2.8.13</springdoc.openapi.starter.webmvc.api.version>
+		<apiphany.version>1.0.20</apiphany.version>
+		<therapi.runtime.javadoc.version>0.15.0</therapi.runtime.javadoc.version>
 
 		<!-- Publishing dependencies versions -->
 		<maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
 		<central.publishing.maven.plugin.version>0.9.0</central.publishing.maven.plugin.version>
+
+	    <!-- Other plugin versions -->
+		<maven.plugin.plugin.version>3.15.2</maven.plugin.plugin.version>
+		<spotless.maven.plugin.version>2.46.1</spotless.maven.plugin.version>
+		<org.eclipse.jdt.core.version>3.42.0</org.eclipse.jdt.core.version>
+		<eclipse.formatter.version>4.36</eclipse.formatter.version>
 
 		<!-- Jacoco arguments empty by default -->
 		<jacocoArgLine></jacocoArgLine>
@@ -70,6 +82,7 @@
 		
 		<!-- Testing command line options -->
 		<oogpArgLine>
+			-XX:+EnableDynamicAgentLoading
 			--add-opens java.base/java.lang.reflect=ALL-UNNAMED
 			--add-opens java.base/sun.reflect.annotation=ALL-UNNAMED
 		</oogpArgLine>
@@ -87,13 +100,13 @@
 		<dependency>
 			<groupId>io.swagger.core.v3</groupId>
 			<artifactId>swagger-jaxrs2-jakarta</artifactId>
-			<version>2.2.39</version>
+			<version>${swagger.jaxrs2.jakarta.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
-			<version>2.8.13</version>
+			<version>${springdoc.openapi.starter.webmvc.api.version}</version>
    		</dependency>
 
 		<!-- Jakarta -->
@@ -117,14 +130,14 @@
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>
-			<version>3.9.6</version>
+			<version>${maven.plugin.api.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-core</artifactId>
-			<version>3.9.11</version>
+			<version>${maven.core.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -138,14 +151,14 @@
 		<dependency>
 			<groupId>io.github.raduking</groupId>
 			<artifactId>apiphany</artifactId>
-			<version>1.0.18</version>
+			<version>${apiphany.version}</version>
 		</dependency>
 
 		<!-- Javadoc -->
 		<dependency>
 			<groupId>com.github.therapi</groupId>
 			<artifactId>therapi-runtime-javadoc</artifactId>
-			<version>0.15.0</version>
+			<version>${therapi.runtime.javadoc.version}</version>
 		</dependency>
 
 		<!-- Testing -->
@@ -191,6 +204,11 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -244,7 +262,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven.compiler.plugin.version}</version>
 				<configuration>
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.target}</target>
@@ -345,19 +362,19 @@
 			<plugin>
 				<groupId>com.diffplug.spotless</groupId>
 				<artifactId>spotless-maven-plugin</artifactId>
-				<version>2.46.1</version>
+				<version>${spotless.maven.plugin.version}</version>
 				<dependencies>
 					<dependency>
 						<groupId>org.eclipse.jdt</groupId>
 						<artifactId>org.eclipse.jdt.core</artifactId>
-						<version>3.42.0</version>
+						<version>${org.eclipse.jdt.core.version}</version>
 					</dependency>
 				</dependencies>
 				<configuration>
 					<java>
 						<eclipse>
 							<file>${project.basedir}/formatter/java-formatter.xml</file>
-							<version>4.36</version>
+							<version>${eclipse.formatter.version}</version>
 						</eclipse>
 						<removeUnusedImports/>
 						<trimTrailingWhitespace/>
