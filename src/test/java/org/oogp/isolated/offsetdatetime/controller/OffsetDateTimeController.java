@@ -17,7 +17,7 @@ public class OffsetDateTimeController implements OffsetDateTimeApi {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OffsetDateTimeController.class);
 
-	private ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
 	public ResponseEntity<Object> getObjectWithOffsetDateTime(final OffsetDateTime dateTime) {

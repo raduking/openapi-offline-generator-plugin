@@ -8,6 +8,8 @@ import org.apiphany.json.JsonBuilder;
 import org.morphix.reflection.Constructors;
 import org.oogp.jakarta.OpenApiSpecJakartaGenerator;
 import org.oogp.spring.OpenApiSpecSpringDocGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Main class for OpenAPI generation used in the CLI mode.
@@ -17,10 +19,14 @@ import org.oogp.spring.OpenApiSpecSpringDocGenerator;
 public class OpenApiGenerator {
 
 	/**
+	 * Logger instance.
+	 */
+	private static final Logger LOGGER = LoggerFactory.getLogger(OpenApiGenerator.class);
+
+	/**
 	 * Main method.
 	 *
 	 * @param args the command line arguments
-	 * @throws Exception in case of errors
 	 */
 	static void main(final String[] args) {
 		if (args.length != 1) {
@@ -36,7 +42,7 @@ public class OpenApiGenerator {
 
 			generate(properties);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error("Error while generating OpenAPI specification", e);
 			System.exit(3);
 		}
 	}

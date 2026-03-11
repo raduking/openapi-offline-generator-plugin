@@ -134,7 +134,11 @@ public class OpenApiSpecJakartaGenerator {
 
 		String outputFile = properties.getOutputFile();
 		File out = new File(outputFile);
-		out.getParentFile().mkdirs();
+		boolean created = out.getParentFile().mkdirs();
+		if (!created) {
+			// could not create directories, but maybe they already exist, log a warning just in case
+			LOGGER.warn("Could not create directories for output file: {}", out.getAbsolutePath());
+		}
 
 		ObjectMapper mapper = switch (outputFile) {
 			case String s when s.endsWith(".json") -> Json.mapper();
