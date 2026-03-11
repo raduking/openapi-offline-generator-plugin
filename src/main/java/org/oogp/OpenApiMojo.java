@@ -3,6 +3,7 @@ package org.oogp;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -86,7 +87,7 @@ public class OpenApiMojo extends AbstractMojo {
 			throw new MojoExecutionException("Failed to apply default properties", e);
 		}
 
-		if (fork) {
+		if (Boolean.TRUE.equals(fork)) {
 			runForked();
 		} else {
 			run();
@@ -121,16 +122,7 @@ public class OpenApiMojo extends AbstractMojo {
 			String json = JsonBuilder.toJson(properties);
 			Files.writeString(tempPropertiesFile, json);
 
-			List<String> cp = new ArrayList<>();
-			cp.add(project.getBuild().getOutputDirectory());
-			cp.addAll(project.getRuntimeClasspathElements());
-			File pluginJar = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
-			cp.add(pluginJar.getAbsolutePath());
-			for (Artifact a : pluginArtifacts) {
-				cp.add(a.getFile().getAbsolutePath());
-			}
-			String classpath = String.join(File.pathSeparator, cp);
-
+			String classpath = getClassPath();
 			List<String> cmd = getCmd(classpath, tempPropertiesFile);
 
 			getLog().info("Forking JVM to generate OpenAPI spec...");
@@ -147,6 +139,9 @@ public class OpenApiMojo extends AbstractMojo {
 			if (exitCode != 0) {
 				throw new MojoExecutionException("Forked OpenAPI generation process exited with code " + exitCode);
 			}
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new MojoExecutionException("Forked OpenAPI generation process was interrupted", e);
 		} catch (Exception e) {
 			throw new MojoExecutionException("Failed to fork OpenAPI generation process", e);
 		} finally {
@@ -158,6 +153,25 @@ public class OpenApiMojo extends AbstractMojo {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Builds the classpath for the forked JVM process.
+	 *
+	 * @return the classpath
+	 * @throws DependencyResolutionRequiredException when project resolution fails
+	 * @throws URISyntaxException when URI syntax is invalid
+	 */
+	private String getClassPath() throws DependencyResolutionRequiredException, URISyntaxException {
+		List<String> cp = new ArrayList<>();
+		cp.add(project.getBuild().getOutputDirectory());
+		cp.addAll(project.getRuntimeClasspathElements());
+		File pluginJar = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+		cp.add(pluginJar.getAbsolutePath());
+		for (Artifact a : pluginArtifacts) {
+			cp.add(a.getFile().getAbsolutePath());
+		}
+		return String.join(File.pathSeparator, cp);
 	}
 
 	/**

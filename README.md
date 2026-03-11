@@ -15,16 +15,19 @@ A Maven plugin for generating OpenAPI documentation offline.
 ![Build (develop)](https://github.com/raduking/openapi-offline-generator-plugin/actions/workflows/build.yml/badge.svg?branch=develop)
 
 ## Features
+
 - Pure offline generation (no network calls, no Spring context loading for Spring applications)
 - Fast, reproducible, CI friendly
 - Supports YAML, JSON bundle outputs
 - Deterministic builds (stable ordering / hashing)
 
 ## Prerequisites
+
 - Java 25+
 - Maven 3.8+
 
 ## Quick Start
+
 Add the plugin to your project POM:
 ```xml
 <build>
@@ -32,7 +35,7 @@ Add the plugin to your project POM:
         <plugin>
             <groupId>com.example</groupId>
             <artifactId>openapi-offline-generator-plugin</artifactId>
-            <version>1.0.4</version>
+            <version>1.0.5</version>
             <executions>
                 <execution>
                     <id>generate-openapi-offline</id>
@@ -59,6 +62,7 @@ mvn clean verify
 Artifacts will be placed under target/openapi.
 
 ## Configuration Options
+
 | Field | Description | Default                                            |
 |-------|-------------|----------------------------------------------------|
 | `packagesToScan` | The base package(s) to scan for REST controllers  (multiple packages can be comma-separated) |
@@ -135,17 +139,20 @@ Attach generated spec:
 ```
 
 ## Offline Philosophy
+
 - All enrichment (bundling, ordering, validation) happens at build time
 - Encourages contract-first development
 - Makes specs diff-friendly for code review
 
 ## Roadmap
+
 - Gradle plugin wrapper
 - Multi-module aggregation
 - OpenAPI 4.x (when finalized)
 - Pluggable preprocessors
 
 ## Contributing
+
 1. Fork
 2. Create feature branch
 3. Add tests (mvn test)
@@ -160,18 +167,24 @@ mvn clean install
 ```
 
 ## Release (Maintainers)
+
 - Update [CHANGELOG](CHANGELOG.md)
+- Update [README](README.md)
 - Set release version
 - mvn clean deploy -Prelease
 
 ## License
+
 [Apache License 2.0](LICENSE)
 
 ## Security
+
 Report vulnerabilities via private issue or security email channel. Do not open public issues until disclosure window ends.
 
 ## Acknowledgements
+
 Inspired by needs for deterministic, auditable API specification generation in regulated environments.
 
 ## Contact
+
 Open an issue for bugs, discussions for ideas.

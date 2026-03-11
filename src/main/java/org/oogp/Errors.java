@@ -14,7 +14,7 @@ public class Errors {
 	/**
 	 * The logger.
 	 */
-	private static final Logger LOGGER = LoggerFactory.getLogger(Conversions.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Errors.class);
 
 	/**
 	 * Hide constructor.

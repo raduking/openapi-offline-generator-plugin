@@ -1,6 +1,6 @@
-package org.oogp.object.controller;
+package org.oogp.isolated.object.controller;
 
-import org.oogp.object.api.ObjectApi;
+import org.oogp.isolated.object.api.ObjectApi;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 

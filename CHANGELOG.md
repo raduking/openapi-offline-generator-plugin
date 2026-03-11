@@ -1,5 +1,14 @@
 ## Release Notes
 
+`1.0.5`
+
+- Added `GeneratorException` class for generation related errors.
+- Upgraded `apiphany` to `1.0.20`.
+- Upgraded `swagger-jaxrs2-jakarta` to `2.2.41`.
+- Upgraded `maven-plugin-api` to `3.9.11`.
+
+---
+
 `1.0.4`
 
 - Upgraded `apiphany` to `1.0.18`.

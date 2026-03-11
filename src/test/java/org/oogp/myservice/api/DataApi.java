@@ -1,4 +1,4 @@
-package org.oogp.api;
+package org.oogp.myservice.api;
 
 import java.util.List;
 

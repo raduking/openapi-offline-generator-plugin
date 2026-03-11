@@ -311,7 +311,7 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	@Nullable
-	public Class<?> getType(final String name) throws NoSuchBeanDefinitionException {
+	public Class<?> getType(final String name) throws NoSuchBeanDefinitionException { // NOSONAR comes from the interface
 		BeanMetadata beanMetadata = nameMap.get(name);
 		if (null == beanMetadata) {
 			throw new NoSuchBeanDefinitionException("No bean available for name: " + name);
@@ -321,7 +321,7 @@ public class CustomApplicationContext implements ApplicationContext {
 
 	@Override
 	@Nullable
-	public Class<?> getType(final String name, final boolean allowFactoryBeanInit) throws NoSuchBeanDefinitionException {
+	public Class<?> getType(final String name, final boolean allowFactoryBeanInit) throws NoSuchBeanDefinitionException { // NOSONAR interface
 		return Errors.unsupportedOperation();
 	}
 
