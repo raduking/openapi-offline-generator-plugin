@@ -60,10 +60,7 @@
 		<apiphany.version>1.1.8</apiphany.version>
 		<therapi.runtime.javadoc.version>0.15.0</therapi.runtime.javadoc.version>
 
-		<!-- Vulnerable versions in parent updated to non-vulnerable ones -->
-		<slf4j.api.version>2.0.17</slf4j.api.version>
-		<logback.classic.version>1.5.32</logback.classic.version>
-		<assertj.version>3.27.7</assertj.version>
+		<!-- Here are vulnerable versions in parent updated to non-vulnerable ones -->
 
 		<!-- Publishing dependencies versions -->
 		<maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
@@ -151,7 +148,6 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.api.version}</version>
 		</dependency>
 
 		<!-- Apiphany -->
@@ -172,7 +168,6 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>${logback.classic.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -215,7 +210,6 @@
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
-			<version>${assertj.version}</version>
 		</dependency>
 
 		<dependency>
