@@ -11,13 +11,13 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.3</version>
+		<version>3.5.11</version>
 		<relativePath />
 	</parent>
 
 	<groupId>io.github.raduking</groupId>
 	<artifactId>openapi-offline-generator-plugin</artifactId>
-	<version>1.0.5</version>
+	<version>1.0.6</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -57,8 +57,13 @@
 		
 		<swagger.jaxrs2.jakarta.version>2.2.41</swagger.jaxrs2.jakarta.version>
 		<springdoc.openapi.starter.webmvc.api.version>2.8.13</springdoc.openapi.starter.webmvc.api.version>
-		<apiphany.version>1.0.20</apiphany.version>
+		<apiphany.version>1.1.8</apiphany.version>
 		<therapi.runtime.javadoc.version>0.15.0</therapi.runtime.javadoc.version>
+
+		<!-- Vulnerable versions in parent updated to non-vulnerable ones -->
+		<slf4j.api.version>2.0.17</slf4j.api.version>
+		<logback.classic.version>1.5.32</logback.classic.version>
+		<assertj.version>3.27.7</assertj.version>
 
 		<!-- Publishing dependencies versions -->
 		<maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
@@ -66,9 +71,10 @@
 
 	    <!-- Other plugin versions -->
 		<maven.plugin.plugin.version>3.15.2</maven.plugin.plugin.version>
-		<spotless.maven.plugin.version>2.46.1</spotless.maven.plugin.version>
-		<org.eclipse.jdt.core.version>3.42.0</org.eclipse.jdt.core.version>
-		<eclipse.formatter.version>4.36</eclipse.formatter.version>
+		<spotless.maven.plugin.version>3.3.0</spotless.maven.plugin.version>
+		<org.eclipse.jdt.core.version>3.44.0</org.eclipse.jdt.core.version>
+		<eclipse.formatter.version>4.38</eclipse.formatter.version>
+		<code.format.version>1.0.0</code.format.version>
 
 		<!-- Jacoco arguments empty by default -->
 		<jacocoArgLine></jacocoArgLine>
@@ -145,6 +151,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.api.version}</version>
 		</dependency>
 
 		<!-- Apiphany -->
@@ -165,6 +172,7 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
+			<version>${logback.classic.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -202,6 +210,12 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-junit-jupiter</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>${assertj.version}</version>
 		</dependency>
 
 		<dependency>
@@ -369,15 +383,22 @@
 						<artifactId>org.eclipse.jdt.core</artifactId>
 						<version>${org.eclipse.jdt.core.version}</version>
 					</dependency>
+					<dependency>
+						<groupId>io.github.raduking</groupId>
+						<artifactId>code-format</artifactId>
+						<version>${code.format.version}</version>
+					</dependency>
 				</dependencies>
 				<configuration>
 					<java>
 						<eclipse>
-							<file>${project.basedir}/formatter/java-formatter.xml</file>
+							<file>java-code-style.xml</file>
 							<version>${eclipse.formatter.version}</version>
 						</eclipse>
-						<removeUnusedImports/>
-						<trimTrailingWhitespace/>
+						<removeUnusedImports />
+						<forbidWildcardImports />
+						<trimTrailingWhitespace />
+						<endWithNewline />
 					</java>
 				</configuration>
 				<executions>
@@ -480,7 +501,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco.plugin.version}</version>
+				<version>${jacoco.maven.plugin.version}</version>
 				<reportSets>
 					<reportSet>
 						<reports>

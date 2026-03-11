@@ -1,5 +1,7 @@
 package org.oogp;
 
+import java.io.Serial;
+
 /**
  * Exception class for generator-related errors.
  *
@@ -10,6 +12,7 @@ public class GeneratorException extends RuntimeException {
 	/**
 	 * Serial version UID.
 	 */
+	@Serial
 	private static final long serialVersionUID = -4336559629781875288L;
 
 	/**

@@ -210,7 +210,11 @@ public class OpenApiSpecSpringDocGenerator {
 		addExtensions(openAPI, properties.getExtensions());
 
 		File out = new File(outputFile);
-		out.getParentFile().mkdirs();
+		boolean created = out.getParentFile().mkdirs();
+		if (!created) {
+			// could not create directories, but maybe they already exist, log a warning just in case
+			LOGGER.warn("Could not create directories for output file: {}", out.getAbsolutePath());
+		}
 
 		boolean isOpenapi31 = openApiResource.getSpringDocConfigProperties().isOpenapi31();
 		ObjectMapper mapper = switch (outputFile) {
